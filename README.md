@@ -23,3 +23,29 @@ When we start designing, we will start by creating the easiest, most tractable s
 
 We have around 3 weeks to complete this assignment. There are also a few other large assignments for other subjects all due at around the same time, so we are going to have to be quite smart with our time for this one because it seems complicated.
 /////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////
+**17/10/2019 -> TommyG
+
+At this stage we have made our first major merge into the master file.
+The functionality being implemented was the input collector and sorter.
+
+This functionality was implemented with the class InputSort. InputSort can take the raw input form and convert it into structures:
+
+Course  -> A course has       : name, hours and list of Teacher (teachers)
+Teacher -> A Teacher has      : name and a list of preferences
+
+This is probably not that difficult to implement. However, my first attempt the day before today was not particularly successful. The problems I had were:
+
+  (1) Thinking I needed to sort the input lines into something as soon as I encountered them
+  (2) Writing too many small non-flexible functions
+  
+(1) ruined the flow of information into containers. For example, the binary matrix indicating which teachers taught which courses came between the names of the lecturers and lecturer preferences. Because I was inputting information into the appropriate containers as they came, I ended up with structures that pointed to each other, which was a confusing hierarchy. I realised that  storing the names of the teachers and then getting the prefferences later would allow me to create teachers, which where then stored in courses
+This creates a clear hierarchy of containers.
+
+(2) this was a basic mistake to make at this point as I have had a decent amount of experience producing larger programs. Still, on my second attempt at implementation of a input sorter, these functions were good reference points for larger, more flexible functions.
+
+Overall I like the code I wrote because it is concise and tractable. The only improvement left to make is to make better use of pointers. As it stands, each course contains a copy of a teacher. This means that teachers involved with multiple courses have separate, identical copies. This is a waste of space and makes maintaining any changes to teachers harder to implement.
+
+/////////////////////////////////////////////////////
+
