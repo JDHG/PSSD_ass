@@ -22,6 +22,7 @@ int main(int argc, char const * argv[]) {
     if(debug) cout << "Debug is TRUE (" << debug << ")" << endl;
 
     InputSort input = InputSort(debug, file_name);
+    input.print();
 
     return 0;
 }
