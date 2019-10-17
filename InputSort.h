@@ -4,6 +4,7 @@
 #include <deque>
 #include <vector>
 #include <iostream>
+// #include <map>
 #include "structs.cpp"
 
 class InputSort
@@ -16,6 +17,7 @@ public:
     bool debug;
     std::deque<std::string> raw_input;
     std::vector<Course> courses;
+    // std::map<std::string, int> teacher_id;
 
     void set_raw_input(char const *);
     std::string pop_input();
