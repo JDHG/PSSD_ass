@@ -1,4 +1,4 @@
-#include "InputSortV2.h"
+#include "InputSort.h"
 
 using namespace std;
 
@@ -120,7 +120,7 @@ InputSort::InputSort(bool b, char const * file_name)
     debug = b;
     set_raw_input(file_name);
 
-    cout << "\n\nPrinting raw_input :\n" << endl;
+    if(debug) cout << "\n\nPrinting raw_input :\n" << endl;
     if(debug) for(auto line : raw_input)
         cout << "    [" << line << "]" << endl;
 
@@ -169,15 +169,15 @@ InputSort::InputSort(bool b, char const * file_name)
     }
 
     //Pop %LP preferences
-   pop_input();
+    pop_input();
 
-   //Get teachers
-  vector<Teacher> * teachers = new vector<Teacher>;
-   for(int i = 0; i < n_teachers; i++)
-   {
-       line = pop_input();
-       teachers->push_back(Teacher(stoi_vector(line, ","), teacher_names->at(i)));
-   }
+    //Get teachers
+    vector<Teacher> * teachers = new vector<Teacher>;
+    for(int i = 0; i < n_teachers; i++)
+    {
+        line = pop_input();
+        teachers->push_back(Teacher(stoi_vector(line, ","), teacher_names->at(i)));
+    }
 
     for(int course_i = 0; course_i < n_courses; course_i++)
         for(int teacher_i = 0; teacher_i < n_teachers; teacher_i++)
