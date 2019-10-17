@@ -121,7 +121,7 @@ InputSort::InputSort(bool b, char const * file_name)
     set_raw_input(file_name);
 
     cout << "\n\nPrinting raw_input :\n" << endl;
-    for(auto line : raw_input)
+    if(debug) for(auto line : raw_input)
         cout << "    [" << line << "]" << endl;
 
     //Get n_rooms | n_courses

@@ -1,6 +1,6 @@
 Rooms       2
 Courses     5
-Hours       2, 3, 2, 45, 2 
+Hours       2, 3, 2, 4, 2 
 Names       ADSA, EDC, PSSD, OOP, CS
 Lecturers:  4
 Cruz, Mingyu, Cheryl, Fred
