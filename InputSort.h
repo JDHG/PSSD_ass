@@ -9,7 +9,7 @@
 class InputSort
 {
 
-
+public:
     int n_rooms;
     int n_courses;
     int n_teachers;
@@ -24,7 +24,7 @@ class InputSort
 
     std::vector<int> stoi_vector(std::string, std::string);
     std::vector<std::string> sto_vector(std::string, std::string);
-public:
+
 
 
     InputSort(bool, char const * );
