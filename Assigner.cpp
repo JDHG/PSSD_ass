@@ -15,49 +15,85 @@ vector<vector<int> > Assigner::initialise_empty_timetable(int n_courses, int n_d
     return tt;
 }
 
-void Assigner::basic_assign(InputSort input, vector<vector<int> > * time_table)
+bool Assigner::room_available(int n_rooms, int current_hour, vector<vector<int> > time_table)
+{
+    unsigned short rooms_in_use = 0;
+    for(int i = 0; i < time_table.size(); i++)
+    {
+        if(time_table.at(i).at(current_hour) >= 0) rooms_in_use++;
+        if(rooms_in_use >= n_rooms) return false;
+    }
+    return true;
+}
+
+void Assigner::basic_assign(InputSort input, vector<vector<int> > * time_table, int n_rooms)
 {
     for(int i = 0; i < input.courses.size(); i++) //for each course
     {
+        bool allow_assign = true; //used to prevent assignment of more than 2 consecutive hours
         Course c = input.courses.at(i);
         int hours_to_assign = c.hours;
+
         for(int j = 0; j < c.teachers.size(); j++) //for each assigned course teacher
         {
             Teacher t = c.teachers.at(j);
             for(int k = 0; k < t.preferences.size(); k++) //for each hour in teacher's preferences
             {
                 vector<int> p = t.preferences;
-                if(p.at(k) == 1 && hours_to_assign > 0)
+                if(p.at(k) == 1 && hours_to_assign > 0 && allow_assign)
                 {
-                    // i relative to courses[i]
-                    time_table->at(i).at(k) = t.id;
-                    hours_to_assign--;
-                    if(hours_to_assign == 0) break;
+                    if(room_available(input.n_rooms, k, *time_table))
+                    {
+                        // i = course, k = hour
+                        time_table->at(i).at(k) = t.id; //write teacher's id to time_table[i][k]
+                        hours_to_assign--;
+                        if(k > 0) if(time_table->at(i).at(k-1) == t.id) allow_assign = false;
+                        if(hours_to_assign == 0) break;
+                    }
                 }
+                else allow_assign = true;
             }
         }
     }
 
-    //cannot do more than 2 in a row
-
-    //need to check room numbers
-
     //if unable to get hours with 1's - assign on 2's and then 5's
-
-
 }
 
-void Assigner::print_vec(std::vector<int> v)
+//output printer formatting
+void Assigner::print_vec(vector<int> v)
 {
-    cout << "[ ";
     for(int i = 0; i < v.size()-1; i++)
         cout << v.at(i) << ", ";
-    cout << v.back() << " ]" << endl;
+    cout << v.back() << endl;
 }
-void Assigner::print_twin_vec(std::vector<vector<int> > v)
+void Assigner::print_twin_vec(vector<vector<int> > v)
 {
     for(int i = 0; i < v.size(); i++)
         print_vec(v.at(i));
+    cout << endl;
+}
+
+//debug printer formatting
+void Assigner::print_time_table_debug(vector<int> v, char neg_replace, int hours_per_day)
+{
+    cout << "[ ";
+    for(int i = 0; i < v.size()-1; i++)
+    {
+        if(i>0 && i%hours_per_day==0) cout << " | ";
+        if(v.at(i) < 0) cout << neg_replace << ", ";
+        else cout << v.at(i) << ", ";
+
+    }
+    if(v.back() < 0) cout << neg_replace << " ]" << endl;
+    else cout << v.back() << " ]" << endl;
+}
+void Assigner::print_twin_vec_debug(vector<vector<int> > v, vector<Course> courses, int hours_per_day)
+{
+    for(int i = 0; i < v.size(); i++)
+    {
+        cout << courses.at(i).name << "\t: ";
+        print_time_table_debug(v.at(i), '~', hours_per_day);
+    }
     cout << endl;
 }
 
@@ -67,14 +103,16 @@ void Assigner::fatal(string error_message)
     exit(1);
 }
 
-vector<vector<int> > Assigner::create_timetable(InputSort input)
+vector<vector<int> > Assigner::create_timetable(InputSort input, int hours_per_day)
 {
     vector<vector<int> > time_table = initialise_empty_timetable(input.n_courses, 5, 8);
 
-    //assign earliest valid timetable slots
-    basic_assign(input, &time_table);
+    //assign earliest valid time_table slots
+    basic_assign(input, &time_table, input.n_rooms);
 
-    if(input.debug) print_twin_vec(time_table);
+    //print to output
+    if(input.debug) print_twin_vec_debug(time_table, input.courses, hours_per_day);
+    else print_twin_vec(time_table);
 
     return time_table;
 }

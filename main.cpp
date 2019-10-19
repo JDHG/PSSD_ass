@@ -10,6 +10,8 @@ using namespace std;
 
 int main(int argc, char const * argv[]) {
 
+    const unsigned short HOURS_PER_DAY = 8;
+
     if(argc < 3) { cout << "FATAL -> not enough arguments on main call (" << argc << "arguments)" << endl; exit(1); }
     if(argc > 3) { cout <<   "FATAL -> too many arguments on main call (" << argc << "arguments)" << endl; exit(1); }
 
@@ -26,7 +28,7 @@ int main(int argc, char const * argv[]) {
     input.print();
 
     Assigner assigner = Assigner();
-    assigner.create_timetable(input);
+    assigner.create_timetable(input, HOURS_PER_DAY);
 
     return 0;
 }
