@@ -26,11 +26,31 @@ bool Assigner::room_available(int n_rooms, int current_hour, vector<vector<int> 
     return true;
 }
 
-void Assigner::basic_assign(InputSort input, vector<vector<int> > * time_table, int n_rooms)
+bool Assigner::day_available(int hours_per_day, std::vector<int> tt_slot, int current_hour)
+{
+    //get hour boundaries of day containing 'current_hour'
+    int day_start = (current_hour / hours_per_day) * hours_per_day;
+    int day_end = day_start + hours_per_day;
+
+    for(int i = day_start; i < day_end; i++)
+        if(tt_slot.at(i) >= 0)
+        {
+            if(tt_slot.at(++i) < 0 && i == current_hour) return true; //allow 2-hour session assignment
+            else return false; //day has a session allocated already
+        }
+    return true; //all hours are available for this course on this day
+}
+
+bool Assigner::permitted(int preference_val, vector<int> permitted_LP_values)
+{
+    for(int p : permitted_LP_values) if(preference_val == p) return true;
+    return false;
+}
+
+void Assigner::basic_assign(InputSort input, vector<vector<int> > * time_table, int n_rooms, vector<int> permitted_LP_values, int hours_per_day)
 {
     for(int i = 0; i < input.courses.size(); i++) //for each course
     {
-        bool allow_assign = true; //used to prevent assignment of more than 2 consecutive hours
         Course c = input.courses.at(i);
         int hours_to_assign = c.hours;
 
@@ -39,24 +59,23 @@ void Assigner::basic_assign(InputSort input, vector<vector<int> > * time_table, 
             Teacher t = c.teachers.at(j);
             for(int k = 0; k < t.preferences.size(); k++) //for each hour in teacher's preferences
             {
-                vector<int> p = t.preferences;
-                if(p.at(k) == 1 && hours_to_assign > 0 && allow_assign)
+                if(day_available(hours_per_day, time_table->at(i), k))
                 {
-                    if(room_available(input.n_rooms, k, *time_table))
+                    vector<int> p = t.preferences;
+                    if(permitted(p.at(k), permitted_LP_values) && hours_to_assign > 0)
                     {
-                        // i = course, k = hour
-                        time_table->at(i).at(k) = t.id; //write teacher's id to time_table[i][k]
-                        hours_to_assign--;
-                        if(k > 0) if(time_table->at(i).at(k-1) == t.id) allow_assign = false;
-                        if(hours_to_assign == 0) break;
+                        if(room_available(input.n_rooms, k, *time_table))
+                        {
+                            time_table->at(i).at(k) = t.id; //write teacher's id to time_table[i][k]
+                            hours_to_assign--;
+                            if(hours_to_assign == 0) break;
+                        }
                     }
                 }
-                else allow_assign = true;
+                else while(k%hours_per_day != hours_per_day-1) k++; //proceed to next day if unavailable
             }
         }
     }
-
-    //if unable to get hours with 1's - assign on 2's and then 5's
 }
 
 //output printer formatting
@@ -103,23 +122,6 @@ void Assigner::fatal(string error_message)
     exit(1);
 }
 
-vector<vector<int> > Assigner::create_timetable(InputSort input, int hours_per_day)
-{
-    vector<vector<int> > time_table = initialise_empty_timetable(input.n_courses, 5, 8);
-
-    //assign earliest valid time_table slots
-    basic_assign(input, &time_table, input.n_rooms);
-
-    //print to output
-    if(!is_complete(time_table, input.courses))
-        cout << "* * * INCOMPLETE SOLUTION -> some course hours were not assigned * * *" << endl;
-    if(input.debug) print_twin_vec_debug(time_table, input.courses, hours_per_day);
-    else print_twin_vec(time_table);
-
-
-    return time_table;
-}
-
 bool Assigner::is_complete(std::vector<vector<int> > time_table, std::vector<Course> courses)
 {
     if(time_table.size() != courses.size()) return false;
@@ -132,4 +134,24 @@ bool Assigner::is_complete(std::vector<vector<int> > time_table, std::vector<Cou
         if(hours_assigned < hours_required) return false;
     }
     return true;
+}
+
+vector<vector<int> > Assigner::create_timetable(InputSort input, int hours_per_day)
+{
+    vector<vector<int> > time_table = initialise_empty_timetable(input.n_courses, 5, hours_per_day);
+
+    //assign earliest valid time_table slots
+    basic_assign(input, &time_table, input.n_rooms, {1}, hours_per_day);
+    if(!is_complete(time_table, input.courses))
+        basic_assign(input, &time_table, input.n_rooms, {1, 2}, hours_per_day);
+    if(!is_complete(time_table, input.courses))
+        basic_assign(input, &time_table, input.n_rooms, {1, 2, 5}, hours_per_day);
+
+    //print to output
+    if(!is_complete(time_table, input.courses))
+        cout << "* * * INCOMPLETE SOLUTION -> some course hours were not assigned * * *" << endl;
+    if(input.debug) print_twin_vec_debug(time_table, input.courses, hours_per_day);
+    else print_twin_vec(time_table);
+
+    return time_table;
 }
