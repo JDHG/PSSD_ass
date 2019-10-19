@@ -60,4 +60,12 @@ Essentially, the algorithm assigns the absolute earliest legal position availabl
 
 I still need to allow preferences lower than 1 to be assigned; Currently if the all courses could not be assigned on available first preferences, it would be incomplete. Now that I write this, I realsie I should probably implement a check to our debug setup that notifies us if the timetable was unable to be completed. I feel that the safest way to do this would be to count the non-negative values in the course's timetable slot and compare to its expected hours. Should be simple enough, and will save us from missing things in the future.
 
-/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+
+**19/10/19 -> Jason
+
+Basic assignment algorithm has been tidied up quite a lot. A few logic bugs were fixed and some out of bounds exceptions fixed too. We should now be in possession of a fairly robust starting platform to start optmising. It is very modular and I beleive that will come in very handy when we start optimising selections it makes (I hope so anyway).
+
+The output timetables produced should now match the expected output and conform to all constraints imposed by the assignment. It might be wise to create the makefile next and submit a working version to see what's going on in the marking domain. After that, we can get the 'goodness' calculator up and running so we can start optimising the algorithm.
+
+///////////////////////////////////////////////////////////
