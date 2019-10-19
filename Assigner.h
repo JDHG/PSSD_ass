@@ -8,11 +8,13 @@
 
 class Assigner
 {
+    bool db = false; //local assigner debug switch
+
     //create return vector of -1's
     std::vector<vector<int> > initialise_empty_timetable(int n_courses, int n_days, int n_hours);
 
-    //check if number of rooms has been exhausted
-    bool room_available(int n_rooms, int current_hour, vector<vector<int> > time_table);
+    //check if number of rooms has been exhausted and prevents double bookings of teachers
+    bool room_available(int n_rooms, int current_hour, int incoming_teacher_id, vector<vector<int> > time_table);
     //check if day already has a course session assigned
     bool day_available(int hours_per_day, std::vector<int> tt_slot, int current_hour);
     //return true if preference_val value is in permitted_LP_values
