@@ -111,8 +111,25 @@ vector<vector<int> > Assigner::create_timetable(InputSort input, int hours_per_d
     basic_assign(input, &time_table, input.n_rooms);
 
     //print to output
+    if(!is_complete(time_table, input.courses))
+        cout << "* * * INCOMPLETE SOLUTION -> some course hours were not assigned * * *" << endl;
     if(input.debug) print_twin_vec_debug(time_table, input.courses, hours_per_day);
     else print_twin_vec(time_table);
 
+
     return time_table;
+}
+
+bool Assigner::is_complete(std::vector<vector<int> > time_table, std::vector<Course> courses)
+{
+    if(time_table.size() != courses.size()) return false;
+    for(int i = 0; i < time_table.size(); i++)
+    {
+        int hours_required = courses.at(i).hours;
+        int hours_assigned = 0;
+        for(int j = 0; j < time_table.at(i).size(); j++)
+            if(time_table.at(i).at(j) >= 0) hours_assigned++;
+        if(hours_assigned < hours_required) return false;
+    }
+    return true;
 }

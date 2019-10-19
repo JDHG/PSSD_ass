@@ -26,6 +26,8 @@ class Assigner
     void print_twin_vec_debug(std::vector<vector<int> > v, std::vector<Course> courses, int hours_per_day);
 
     void fatal(std::string error_message);
+    //return true if all course hours have been assigned
+    bool is_complete(std::vector<vector<int> > time_table, std::vector<Course> courses);
 public:
     //TIMETABLE CREATION ALGORITHM
     std::vector<vector<int> > create_timetable(InputSort input, int hours_per_day);
