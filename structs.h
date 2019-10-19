@@ -3,9 +3,10 @@
 
 struct Teacher
 {
+    int id;
     std::string name;
     std::vector<int> preferences;
-    Teacher(std::vector<int>, std::string);
+    Teacher(std::vector<int>, std::string, int);
     void print();
 };
 struct Course

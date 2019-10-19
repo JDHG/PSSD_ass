@@ -4,17 +4,37 @@
 #include "structs.h"
 #include "InputSort.h"
 #include <vector>
+#include <iostream>
 
 class Assigner
 {
-    //set lunchbreak LP hours to 0 - LB hour is index of LunchBreak hour in an hours array for 1 day -> day[LB_hour]
-    void nullify_lunchbreaks(std::vector<int> * preferences, int LB_hour, int n_hours);
+    bool db = false; //local assigner debug switch
 
-    //create return vector of -1's
-    std::vector<int> initialise_empty_timetable(int n_courses, int n_days, int n_hours);
+    //create return vector-vector of -1's
+    std::vector<vector<int> > initialise_empty_timetable(int n_courses, int n_days, int n_hours);
 
-    void print_v(std::vector<int> v);
+    //check if number of rooms has been exhausted and prevents double bookings of teachers
+    bool room_available(int n_rooms, int current_hour, int incoming_teacher_id, vector<vector<int> > time_table);
+    //check if day already has a course session assigned (strict one session per day)
+    bool day_available(int hours_per_day, std::vector<int> tt_slot, int current_hour);
+    //return true if preference_val value is in permitted_LP_values
+    bool permitted(int preference_val, std::vector<int> permitted_LP_values);
+    //basic hour assigner - allocates earliest valid time_table slots
+    void basic_assign(InputSort input, std::vector<Course> * courses, vector<vector<int> > * time_table, int n_rooms, std::vector<int> permitted_LP_values, int hours_per_day);
+
+    //print time_table in readable debug format
+    void print_time_table_debug(std::vector<int> v, char neg_replace, int hours_per_day); //print neg_replace instead of negative integers
+    void print_twin_vec_debug(std::vector<vector<int> > v, std::vector<Course> courses, int hours_per_day);
+
+    void fatal(std::string error_message);
+    //return true if all course hours have been assigned
+    bool is_complete(std::vector<vector<int> > time_table, std::vector<Course> courses, bool input_debug);
 public:
-    std::vector<int> basic_timetable(std::vector<Course> courses);
+    //TIMETABLE CREATION ALGORITHM
+    std::vector<vector<int> > create_timetable(InputSort input, int hours_per_day);
+
+    //print vectors in output format
+    void print_vec(std::vector<int> v);
+    void print_twin_vec(std::vector<vector<int> > v);
 };
 #endif

@@ -2,6 +2,7 @@
 #include <vector>
 #include <deque>
 #include "InputSort.cpp"
+#include "Assigner.cpp"
 
 using namespace std;
 
@@ -9,8 +10,10 @@ using namespace std;
 
 int main(int argc, char const * argv[]) {
 
-    if(argc < 3) cout << "FATAL -> not enough arguments on main call (" << argc << "arguments)" << endl;
-    if(argc > 3) cout <<   "FATAL -> too many arguments on main call (" << argc << "arguments)" << endl;
+    const unsigned short HOURS_PER_DAY = 8;
+
+    if(argc < 3) { cout << "FATAL -> not enough arguments on main call (" << argc << "arguments)" << endl; exit(1); }
+    if(argc > 3) { cout <<   "FATAL -> too many arguments on main call (" << argc << "arguments)" << endl; exit(1); }
 
     bool debug = false;
     string * do_debug = new string; *do_debug = argv[1];
@@ -22,8 +25,11 @@ int main(int argc, char const * argv[]) {
     if(debug) cout << "Debug is TRUE (" << debug << ")" << endl;
 
     InputSort input = InputSort(debug, file_name);
-    input.print();
+    if(debug) input.print();
 
+    Assigner assigner = Assigner();
+    vector<vector<int> > TT = assigner.create_timetable(input, HOURS_PER_DAY);
+    assigner.print_twin_vec(TT); //output generation
 
     return 0;
 }

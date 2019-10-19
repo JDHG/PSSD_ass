@@ -172,11 +172,16 @@ InputSort::InputSort(bool b, char const * file_name)
     pop_input();
 
     //Get teachers
+    vector<int> preferences;
     vector<Teacher> * teachers = new vector<Teacher>;
     for(int i = 0; i < n_teachers; i++)
     {
         line = pop_input();
-        teachers->push_back(Teacher(stoi_vector(line, ","), teacher_names->at(i)));
+        preferences = stoi_vector(line, ",");
+        //nullify_lunchbreaks
+        for(int j = 3; j < preferences.size(); j+=8)
+            preferences.at(j) = -1;
+        teachers->push_back(Teacher(preferences, teacher_names->at(i), i));
     }
 
     for(int course_i = 0; course_i < n_courses; course_i++)
