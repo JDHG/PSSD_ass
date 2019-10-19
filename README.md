@@ -49,3 +49,15 @@ Overall I like the code I wrote because it is concise and tractable. The only im
 
 /////////////////////////////////////////////////////
 
+**19/10/19 -> Jason
+
+Implemented a very basic version of the assignment algorithm. It produces the simplest possible form of a legal timetable.
+- assigns first available teacher's 1st preference to first course in line
+- prevents over allocating rooms
+- does not assign on lunchbreaks or assign more than 2 hours in a row
+
+Essentially, the algorithm assigns the absolute earliest legal position available in the timetable to the earliest available teacher. This is hopefully going to provide a template which we can expand on and optimise as we develop our program.
+
+I still need to allow preferences lower than 1 to be assigned; Currently if the all courses could not be assigned on available first preferences, it would be incomplete. Now that I write this, I realsie I should probably implement a check to our debug setup that notifies us if the timetable was unable to be completed. I feel that the safest way to do this would be to count the non-negative values in the course's timetable slot and compare to its expected hours. Should be simple enough, and will save us from missing things in the future.
+
+/////////////////////////////////////////////////////
