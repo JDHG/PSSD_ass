@@ -25,10 +25,11 @@ int main(int argc, char const * argv[]) {
     if(debug) cout << "Debug is TRUE (" << debug << ")" << endl;
 
     InputSort input = InputSort(debug, file_name);
-    input.print();
+    if(debug) input.print();
 
     Assigner assigner = Assigner();
-    assigner.create_timetable(input, HOURS_PER_DAY);
+    vector<vector<int> > TT = assigner.create_timetable(input, HOURS_PER_DAY);
+    assigner.print_twin_vec(TT); //output generation
 
     return 0;
 }

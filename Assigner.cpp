@@ -89,7 +89,6 @@ void Assigner::print_twin_vec(vector<vector<int> > v)
 {
     for(int i = 0; i < v.size(); i++)
         print_vec(v.at(i));
-    cout << endl;
 }
 
 //debug printer formatting
@@ -147,11 +146,10 @@ vector<vector<int> > Assigner::create_timetable(InputSort input, int hours_per_d
     if(!is_complete(time_table, input.courses))
         basic_assign(input, &time_table, input.n_rooms, {1, 2, 5}, hours_per_day);
 
-    //print to output
-    if(!is_complete(time_table, input.courses))
+    //display results if debug enabled
+    if(input.debug && !is_complete(time_table, input.courses))
         cout << "* * * INCOMPLETE SOLUTION -> some course hours were not assigned * * *" << endl;
     if(input.debug) print_twin_vec_debug(time_table, input.courses, hours_per_day);
-    else print_twin_vec(time_table);
 
     return time_table;
 }

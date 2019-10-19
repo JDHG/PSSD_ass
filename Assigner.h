@@ -20,10 +20,6 @@ class Assigner
     //basic hour assigner
     void basic_assign(InputSort input, vector<vector<int> > * time_table, int n_rooms, std::vector<int> permitted_LP_values, int hours_per_day);
 
-    //print vectors in output format
-    void print_vec(std::vector<int> v);
-    void print_twin_vec(std::vector<vector<int> > v);
-
     //print time_table in readable debug format
     void print_time_table_debug(std::vector<int> v, char neg_replace, int hours_per_day); //print neg_replace instead of negative integers
     void print_twin_vec_debug(std::vector<vector<int> > v, std::vector<Course> courses, int hours_per_day);
@@ -34,5 +30,9 @@ class Assigner
 public:
     //TIMETABLE CREATION ALGORITHM
     std::vector<vector<int> > create_timetable(InputSort input, int hours_per_day);
+
+    //print vectors in output format
+    void print_vec(std::vector<int> v);
+    void print_twin_vec(std::vector<vector<int> > v);
 };
 #endif
