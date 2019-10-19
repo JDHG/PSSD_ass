@@ -71,6 +71,7 @@ void Assigner::basic_assign(InputSort input, vector<Course> * courses, vector<ve
                     if(permitted(p.at(k), permitted_LP_values) && room_available(input.n_rooms, k, t.id, *time_table))
                     {
                         time_table->at(i).at(k) = t.id; //write teacher's id to time_table[i][k]
+                        if(db || input.debug) cout << "    add " << t.id << ':' << t.name << " LP(" << p.at(k) << ") @ course[hour] " << c->name << '['<<k<<']' << endl;
                         c->hours--;
                         if(c->hours == 0) break;
                     }
@@ -136,7 +137,7 @@ vector<vector<int> > Assigner::create_timetable(InputSort input, int hours_per_d
         basic_assign(input, &input.courses, &time_table, input.n_rooms, {1, 2, 5}, hours_per_day);
 
     //display results if debug enabled
-    if(input.debug && !is_complete(time_table, input.courses, input.debug))
+    if(input.debug && !is_complete(time_table, input.courses, false))
         cout << "* * * INCOMPLETE SOLUTION -> some course hours were not assigned * * *" << endl;
     if(input.debug) print_twin_vec_debug(time_table, input.courses, hours_per_day);
 
