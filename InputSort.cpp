@@ -150,7 +150,7 @@ InputSort::InputSort(bool b, char const * file_name)
     delete course_names;
 
     //Get n_teachers
-    n_teachers = stoi(pop_input("Lecturers:"));
+    n_teachers = stoi(pop_input("Lecturers"));
 
     //Get teacher names
     line = pop_input();
