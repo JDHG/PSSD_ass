@@ -69,3 +69,13 @@ Basic assignment algorithm has been tidied up quite a lot. A few logic bugs were
 The output timetables produced should now match the expected output and conform to all constraints imposed by the assignment. It might be wise to create the makefile next and submit a working version to see what's going on in the marking domain. After that, we can get the 'goodness' calculator up and running so we can start optimising the algorithm.
 
 ///////////////////////////////////////////////////////////
+
+**23/10/19 -> Jason
+
+Got ahold of the EvalUCS program yesterday. Didn't work at first. Sent it back to Cruz for some tweaking and got it back today. It still didn't work on my laptop because of the reading of getline() into a bool (not entirely sure how that works at her end. different c++ version maybe?). Had to change all getline() statements to be standalone so the return wasn't used. It works now but hopefully that doesn't break anything down the line.
+
+Next problem: The Eval program simply prints info to the console, as it would of course, but we want to be able to probe its return value and use it to find better solutions. This means we will need to integrate it with our program so at the end of each loop in our timetable generator, we can read the fitness value and change behaviour based on what we see. If we get a fitness value of 1, we can stop because the solution is optimal. If >1, we can try different algorithm behaviours to try and produce better results. This also allows us to keep a copy of the timetable with the lowest fitness value so at the end, when all avenues have been exhausted, we get back the best solution we found and write it to output.
+
+I will attempt to convert this Eval program into something we can call in our program. I'm sure there are ways we can do this using BASH commands or other external software/commands but I don't know how to do that yet, so I'll just stick with what I know for now.
+
+///////////////////////////////////////////////////////////
