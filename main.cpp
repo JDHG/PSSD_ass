@@ -28,7 +28,15 @@ int main(int argc, char const * argv[]) {
     if(debug) input.print();
 
     Assigner assigner = Assigner();
-    vector<vector<int> > TT = assigner.create_timetable(input, HOURS_PER_DAY);
+    vector<vector<int> > TT; //stores resulting time_table
+
+    //PROGRAM LOOP
+    while(Assigner::not_complete)
+    {
+
+        TT = assigner.create_timetable(input, HOURS_PER_DAY);
+
+    }
     assigner.print_twin_vec(TT); //output generation
 
     return 0;

@@ -30,6 +30,8 @@ class Assigner
     //return true if all course hours have been assigned
     bool is_complete(std::vector<vector<int> > time_table, std::vector<Course> courses, bool input_debug);
 public:
+    static bool not_complete; //flag to set when solution searching is finished
+
     //TIMETABLE CREATION ALGORITHM
     std::vector<vector<int> > create_timetable(InputSort input, int hours_per_day);
 

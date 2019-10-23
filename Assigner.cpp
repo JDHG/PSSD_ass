@@ -1,6 +1,8 @@
 #include "Assigner.h"
 using namespace std;
 
+bool Assigner::not_complete = true;
+
 vector<vector<int> > Assigner::initialise_empty_timetable(int n_courses, int n_days, int n_hours)
 {
     if(db) cout << "Assigner :: initialise_empty_timetable" << endl;
@@ -140,6 +142,8 @@ vector<vector<int> > Assigner::create_timetable(InputSort input, int hours_per_d
     if(input.debug && !is_complete(time_table, input.courses, false))
         cout << "* * * INCOMPLETE SOLUTION -> some course hours were not assigned * * *" << endl;
     if(input.debug) print_twin_vec_debug(time_table, input.courses, hours_per_day);
+
+    not_complete = false; //ends program in main
 
     return time_table;
 }
