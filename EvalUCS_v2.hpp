@@ -58,10 +58,8 @@ public:
     ifstream sr(fileName.c_str());
     if (! sr.is_open()) return false;
 
-    // bool status = getline(sr,input);
+    // bool status=getline(sr,input);
     getline(sr,input);
-
-    // return false;
 
      // match on keyword read in number, assign to var and continue;
      if(parseField<int>("Rooms",input,rooms)){
@@ -225,6 +223,7 @@ public:
 class Solution{
 public:
   static IntMatrix  Timetable;
+  // static vector< vector<int> > Timetable;
 
   static bool readSolution(string fileName){
 
@@ -280,6 +279,54 @@ public:
     }
 
 
+   static void printTimetable(vector < vector <int>>  solution, vector <string> cNames, vector <string>  lNames) {
+
+   vector < string> weekdays = {"             Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+
+   vector < string> labelHours = {" 9-10", "10-11", "11-12","Lunch", "13-14", "14-15", "15-16","16-17"};//8 working hours
+
+
+   vector < vector <int> > copysol = solution;
+   int courses = 5;
+   int index=0;
+   int hoursWeek=40;
+
+   for (int i = 0; i < weekdays.size(); i++) {
+            cout << weekdays[i] << "          ";
+        }
+   cout << endl;
+
+   cout << "-----------------------------------------------------------------------------------------------" << endl;
+   for (int i = 0; i < labelHours.size(); i++) {
+     // iterate over solution for first course for each day
+    bool found ;
+    bool next = true;
+    while (next) {
+        next = false;
+        cout << labelHours[i];
+        for (int j = i; j < hoursWeek ; j+=8) {
+        found = false;
+         for (int k = 0; k < courses; k++) {
+            if(copysol[k][j]!=-1) {
+                 if (!found)  {
+                      found  = true;
+                      cout <<  "  " << std::setw (4) <<  cNames[k] << "(" << std::setw (6) << lNames[copysol[k][j]] << ")    " ;
+                      copysol[k][j] = -1;
+                      }
+                 else {
+                       next = true;
+                       break;
+                  }
+              }
+        }
+         if (!found)
+                 cout << "                  ";
+        }
+        cout << endl;
+     }
+
+    }
+  }
 
   static int checkConstraints(vector < vector <int>>  solution, int rooms, vector <int> hoursperCourse, vector < vector <int>>  LP, vector <string> cNames, vector <string>  lNames){
         //violated constraint
@@ -314,6 +361,11 @@ public:
             for (int j = 0; j < hoursWeek; j++) {
                 il=solution[i][j];//indice lecturer
                 if(il!=-1){
+                    // check lecturer is allocated to course
+                    if (ProblemUCS::TL[i][il] != 1) {
+                       cout << "Major Violation: lecturer " << lNames[il] <<  " is not allocated to course" << cNames[i] << endl;
+                        return 100000;
+                    }
                     //Lunch constraint  positions 3,11,19,27,35
                     if(j%8 == 3) {
                         cout << "Constraint Violation: class  for lecturer" << lNames[il] <<  " is allocated at lunch break" << endl;
@@ -357,7 +409,7 @@ public:
                         //printf("Constraint Violation: More than two hours for course %s in  day %d \n", cNames[i], day);
                     failedConstraints++;
                     }
-                    else if(hoursday>1){//No separated hours // && j/8 == (j-1)/8 ?
+                    else if(hoursday>1){//No separated hours
                         if(solution[i][j-1]==-1){
                             cout << "Constraint Violation: two  separate session for course " << cNames[i] <<  " on day "   << day << endl;
                             //printf("Constraint Violation: two separate session for course %s on day %d \n", cNames[i], day);
@@ -368,7 +420,7 @@ public:
                 }// j != -1
 
                 //check when is a new day
-                if((j > 0) && (j%8==0)){
+                if(j%8==7){
                     //a new day is starting
                     day++;
                     //A lecture with more than two hours per day
@@ -385,26 +437,20 @@ public:
                                     int failedConstraints){
 
         int hoursWeek=40;
-        int il;//indice the lecturer
+        int il;//index of lecturer allocated to it
         double penalization;
         //double
         //i is rows
         int totalAllocateHours=0;
 
         double sum=0;
-
-        // cout << "courses = " << courses << endl;
-        // cout << "hoursWeek = " << hoursWeek << endl;
-
         for (int i = 0; i < courses; i++) {
             //j is cols
             for (int j = 0; j < hoursWeek; j++) {
-                // cout << "s[i][j] = " << solution[i][j] << endl;
                 if(solution[i][j]!=-1){
                     totalAllocateHours++;
                     il=solution[i][j];
                     //sum the preference
-                    // cout << "LP[il][j] = " << LP[il][j] << endl;
                     if (LP[il][j] == 0)
                        sum = sum+ 10;    //  busy slot is penalised by 10
                      else
@@ -415,8 +461,6 @@ public:
             }
 
         }//end for courses
-
-        // cout << "sum = " << sum << endl;
 
 
         //we're penalise per each constraint that the solution violated and the number of times

@@ -1,4 +1,4 @@
-#include "EvalUCS.hpp"
+#include "EvalUCS_v2.hpp"
 
 // static variables.
 // ***********************************
@@ -12,18 +12,18 @@ IntMatrix ProblemUCS::TL;
 IntMatrix ProblemUCS::LP;
 IntMatrix Solution::Timetable;
 
-// simple driver program 
+// simple driver program
 int main(int argc, char* argv[]) {
 
   if(argc !=3){
-    cerr << "usage: ./Eval ucs_problem_filename   ucs_solution filename" 
+    cerr << "usage: ./Eval ucs_problem_filename   ucs_solution filename"
 	 << endl;
     exit(EXIT_FAILURE);
   }
-  
+
   string ucsFileName=string(argv[1]);
   string ucsSolnFileName=string(argv[2]);
-    
+
   ProblemUCS::readUCSInstance(ucsFileName);;
   double res ;   // place holder for result
 
@@ -31,21 +31,22 @@ int main(int argc, char* argv[]) {
     cout << "calling readSolution " << endl;
   // if a feasible solution can be read
    if ( Solution::readSolution(ucsSolnFileName)) {
- 
+
+
+    Solution::printTimetable(Solution::Timetable, ProblemUCS::cNames, ProblemUCS::lNames);
+
     cout << "calling constrains " << endl;
     int constrains = Solution::checkConstraints(Solution::Timetable, ProblemUCS::rooms, ProblemUCS::cHours, ProblemUCS::LP, ProblemUCS::cNames, ProblemUCS::lNames);
     if (constrains == 0)
          cout << "your solution is feasible" << endl;
-     else 
+     else
          cout << "your solution is not feasible" << endl;
-    
+
       res =  Solution::getFitnessValue(Solution::Timetable, ProblemUCS::mC,ProblemUCS::LP,ProblemUCS::cHours,constrains);
       cout << "Fitness value " <<  res << endl;
     }
-    else { 
+    else {
           cout << "Solution file is not readable " << endl;
     }
 
 }
-
-
