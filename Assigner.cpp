@@ -1,6 +1,8 @@
 #include "Assigner.h"
 using namespace std;
 
+bool Assigner::not_complete = true;
+
 vector<vector<int> > Assigner::initialise_empty_timetable(int n_courses, int n_days, int n_hours)
 {
     if(db) cout << "Assigner :: initialise_empty_timetable" << endl;
@@ -54,12 +56,14 @@ bool Assigner::permitted(int preference_val, vector<int> permitted_LP_values)
     return false;
 }
 
-void Assigner::basic_assign(InputSort input, vector<Course> * courses, vector<vector<int> > * time_table, int n_rooms, vector<int> permitted_LP_values, int hours_per_day)
+void Assigner::basic_assign(InputSort input, vector<Course> courses, vector<vector<int> > * time_table, int n_rooms, vector<int> permitted_LP_values, int hours_per_day, int run)
 {
-    if(db) cout << "Assigner :: basic_assign" << endl;
-    for(int i = 0; i < courses->size(); i++) //for each course
+    if(db || input.debug) cout << "Assigner :: basic_assign :: run number ("<<run<<")" << endl;
+    if(run > 2) return; //run number is recursive depth -> forces return after 3 runs which goes through all permitted_LP_values vectors
+
+    for(int i = 0; i < courses.size(); i++) //for each course
     {
-        Course * c = &courses->at(i);
+        Course * c = &courses.at(i);
         for(int j = 0; j < c->teachers.size(); j++) //for each assigned course teacher
         {
             Teacher t = c->teachers.at(j);
@@ -80,6 +84,16 @@ void Assigner::basic_assign(InputSort input, vector<Course> * courses, vector<ve
             }
         }
     }
+    //if incomplete, run again allowing assignment on LP = {1 || 2}
+    if(run == 0 && !is_complete(*time_table, courses, input.debug))
+        basic_assign(input, courses, time_table, input.n_rooms, {1, 2}, hours_per_day, ++run);
+
+    //if still incomplete, run again allowing assignment on LP = {1 || 2 || 5}
+    else if(run == 1 && !is_complete(*time_table, courses, input.debug))
+        basic_assign(input, courses, time_table, input.n_rooms, {1, 2, 5}, hours_per_day, ++run);
+
+    else if(input.debug && !is_complete(*time_table, courses, input.debug))
+        cout << "* * * INCOMPLETE SOLUTION -> some course hours were not assigned * * *" << endl;
 }
 
 //debug printer formatting
@@ -130,16 +144,12 @@ vector<vector<int> > Assigner::create_timetable(InputSort input, int hours_per_d
     vector<vector<int> > time_table = initialise_empty_timetable(input.n_courses, 5, hours_per_day);
 
     //populate time table -> allowing worse LP selections if returned time_table is incomplete (course hours outstanding)
-    basic_assign(input, &input.courses, &time_table, input.n_rooms, {1}, hours_per_day);
-    if(!is_complete(time_table, input.courses, input.debug))
-        basic_assign(input, &input.courses, &time_table, input.n_rooms, {1, 2}, hours_per_day);
-    if(!is_complete(time_table, input.courses, input.debug))
-        basic_assign(input, &input.courses, &time_table, input.n_rooms, {1, 2, 5}, hours_per_day);
+    basic_assign(input, input.courses, &time_table, input.n_rooms, {1}, hours_per_day, 0);
 
     //display results if debug enabled
-    if(input.debug && !is_complete(time_table, input.courses, false))
-        cout << "* * * INCOMPLETE SOLUTION -> some course hours were not assigned * * *" << endl;
     if(input.debug) print_twin_vec_debug(time_table, input.courses, hours_per_day);
+
+    not_complete = false; //ends program in main
 
     return time_table;
 }

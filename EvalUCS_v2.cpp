@@ -13,40 +13,34 @@ IntMatrix ProblemUCS::LP;
 IntMatrix Solution::Timetable;
 
 // simple driver program
-int main(int argc, char* argv[]) {
+// double Eval(int argc, char* argv[]) {
+double Eval(string input_file, string time_table, bool debug) {
 
-  if(argc !=3){
-    cerr << "usage: ./Eval ucs_problem_filename   ucs_solution filename"
-	 << endl;
-    exit(EXIT_FAILURE);
-  }
-
-  string ucsFileName=string(argv[1]);
-  string ucsSolnFileName=string(argv[2]);
+  string ucsFileName = input_file;
+  string ucsSolnFileName = time_table;
 
   ProblemUCS::readUCSInstance(ucsFileName);;
   double res ;   // place holder for result
 
-
-    cout << "calling readSolution " << endl;
+    if(debug) cout << "calling readSolution " << endl;
   // if a feasible solution can be read
    if ( Solution::readSolution(ucsSolnFileName)) {
 
-
     Solution::printTimetable(Solution::Timetable, ProblemUCS::cNames, ProblemUCS::lNames);
 
-    cout << "calling constrains " << endl;
+    if(debug) cout << "calling constrains " << endl;
     int constrains = Solution::checkConstraints(Solution::Timetable, ProblemUCS::rooms, ProblemUCS::cHours, ProblemUCS::LP, ProblemUCS::cNames, ProblemUCS::lNames);
     if (constrains == 0)
-         cout << "your solution is feasible" << endl;
+         if(debug) cout << "your solution is feasible" << endl;
      else
-         cout << "your solution is not feasible" << endl;
+         if(debug) cout << "your solution is not feasible" << endl;
 
       res =  Solution::getFitnessValue(Solution::Timetable, ProblemUCS::mC,ProblemUCS::LP,ProblemUCS::cHours,constrains);
-      cout << "Fitness value " <<  res << endl;
+      if(debug) cout << "Fitness value " <<  res << endl;
     }
     else {
-          cout << "Solution file is not readable " << endl;
+          if(debug) cout << "Solution file is not readable " << endl;
     }
 
+    return res;
 }

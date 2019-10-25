@@ -21,7 +21,11 @@
 #include <ctime>
 #include <climits>
 
+#include <sstream>
+
 using namespace std;
+
+bool enable_readout = false; //switch to enable printout from this function
 
 const int maxsize=100000+5;
 vector<string> split(const string& s, char delim);
@@ -63,7 +67,7 @@ public:
 
      // match on keyword read in number, assign to var and continue;
      if(parseField<int>("Rooms",input,rooms)){
-	cout << "r: " << rooms << endl;
+	if(enable_readout) cout << "r: " << rooms << endl;
       }else{
         // there was a problem reading... report and return
         cerr << "inconsistent file - first line should have Rooms" << endl;
@@ -75,7 +79,7 @@ public:
       getline(sr,input);
 
       if(parseField<int>("Courses",input,mC)){
-	cout << "mCourses: " << mC << endl;
+	if(enable_readout) cout << "mCourses: " << mC << endl;
 	;
       }else{
         // there was a problem reading... report and return
@@ -99,10 +103,10 @@ public:
        cHours.push_back(stoi(next));
     }
 
-    cout << "hours read" << endl;
+    if(enable_readout) cout << "hours read" << endl;
     for (int i=0;i<mC;i++)
-            cout << cHours[i] << " ";
-    cout << endl;
+            if(enable_readout) cout << cHours[i] << " ";
+    if(enable_readout) cout << endl;
 
     // now we get the line with the course names
     // status=getline(sr,input);  // read the line
@@ -116,16 +120,16 @@ public:
        cNames.push_back(removeDoubleSpace(next));
     }
 
-    cout << "names read" << endl;
+    if(enable_readout) cout << "names read" << endl;
     for (int i=0;i<mC;i++)
-	cout << cNames[i] <<  endl;
+	if(enable_readout) cout << cNames[i] <<  endl;
 
      // read lecture numbers
      // status=getline(sr,input);
      getline(sr,input);
 
      if(parseField<int>("Lecturers",input,nL)){
-	cout << "lecturers: " << nL << endl;
+	if(enable_readout) cout << "lecturers: " << nL << endl;
 	;
       }else{
         // there was a problem reading... report and return
@@ -144,9 +148,9 @@ public:
        lNames.push_back(removeDoubleSpace(next));
     }
 
-    cout << "lecture names read" << endl;
+    if(enable_readout) cout << "lecture names read" << endl;
     for (int i=0;i<nL;i++)
-	cout << lNames[i] <<  endl;
+	if(enable_readout) cout << lNames[i] <<  endl;
 
 
     // status=getline(sr,input);  // read the  comment line for TL
@@ -185,11 +189,11 @@ public:
          }
      }
 
-    cout << "LP  read" << endl;
+    if(enable_readout) cout << "LP  read" << endl;
     for (int i=0;i<nL;i++) {
        for (int j=0;j<40;j++)
-	cout << LP[i][j] <<  " ";
-    cout << endl;
+	if(enable_readout) cout << LP[i][j] <<  " ";
+    if(enable_readout) cout << endl;
     }
 
     return true;
@@ -229,9 +233,11 @@ public:
 
     //  file format is Timetable.csv
     string input;   // input string to hold line
-    ifstream sr(fileName.c_str());   // open the file
 
-    if (! sr.is_open()) return false;  // file can't open then exit
+/* converted to read fileName string into stringstream instead of treating as an external file 23-10-19 */
+
+    stringstream sr;
+    sr.str(fileName);   // open the file
 
     int courses = ProblemUCS::mC;
 
@@ -244,7 +250,7 @@ public:
     stringstream ss;
   try{
     for (int i=0;i< courses;i++)  {
-       //cout << "line" << i << endl;
+       //if(enable_readout) cout << "line" << i << endl;
        // status = getline(sr,input);     // file can open grab the first line
        getline(sr,input);
        ss.str(input);
@@ -256,15 +262,15 @@ public:
              j++;
          }
          if (j != 40)
-             cout << j << endl;
+             if(enable_readout) cout << j << endl;
 
      }
 
-    cout << "timetable"  << endl;
+    if(enable_readout) cout << "timetable"  << endl;
     for (int i=0;i<courses;i++)  {
       for (int j=0;j<40;j++)
-            cout <<  Timetable[i][j]  << " " ;
-      cout << endl;
+            if(enable_readout) cout <<  Timetable[i][j]  << " " ;
+      if(enable_readout) cout << endl;
     }
 
   }catch(int e){
@@ -273,7 +279,7 @@ public:
       return false;
        }
 
-    cout << "read retruns true" << endl;
+    if(enable_readout) cout << "read retruns true" << endl;
     return true;
 
     }
@@ -292,25 +298,25 @@ public:
    int hoursWeek=40;
 
    for (int i = 0; i < weekdays.size(); i++) {
-            cout << weekdays[i] << "          ";
+            if(enable_readout) cout << weekdays[i] << "          ";
         }
-   cout << endl;
+   if(enable_readout) cout << endl;
 
-   cout << "-----------------------------------------------------------------------------------------------" << endl;
+   if(enable_readout) cout << "-----------------------------------------------------------------------------------------------" << endl;
    for (int i = 0; i < labelHours.size(); i++) {
      // iterate over solution for first course for each day
     bool found ;
     bool next = true;
     while (next) {
         next = false;
-        cout << labelHours[i];
+        if(enable_readout) cout << labelHours[i];
         for (int j = i; j < hoursWeek ; j+=8) {
         found = false;
          for (int k = 0; k < courses; k++) {
             if(copysol[k][j]!=-1) {
                  if (!found)  {
                       found  = true;
-                      cout <<  "  " << std::setw (4) <<  cNames[k] << "(" << std::setw (6) << lNames[copysol[k][j]] << ")    " ;
+                      if(enable_readout) cout <<  "  " << std::setw (4) <<  cNames[k] << "(" << std::setw (6) << lNames[copysol[k][j]] << ")    " ;
                       copysol[k][j] = -1;
                       }
                  else {
@@ -320,9 +326,9 @@ public:
               }
         }
          if (!found)
-                 cout << "                  ";
+                 if(enable_readout) cout << "                  ";
         }
-        cout << endl;
+        if(enable_readout) cout << endl;
      }
 
     }
@@ -363,19 +369,19 @@ public:
                 if(il!=-1){
                     // check lecturer is allocated to course
                     if (ProblemUCS::TL[i][il] != 1) {
-                       cout << "Major Violation: lecturer " << lNames[il] <<  " is not allocated to course" << cNames[i] << endl;
+                       if(enable_readout) cout << "Major Violation: lecturer " << lNames[il] <<  " is not allocated to course" << cNames[i] << endl;
                         return 100000;
                     }
                     //Lunch constraint  positions 3,11,19,27,35
                     if(j%8 == 3) {
-                        cout << "Constraint Violation: class  for lecturer" << lNames[il] <<  " is allocated at lunch break" << endl;
+                        if(enable_readout) cout << "Constraint Violation: class  for lecturer" << lNames[il] <<  " is allocated at lunch break" << endl;
                         failedConstraints++;
                     }
 
                     busyRooms[j]++;
                     //more classes allocated at the same time  than the number of rooms
                     if(busyRooms[j]>rooms){
-                        cout << "Constraint Violation: More classes than rooms at the same hour, day " << day <<  "hour " << j%8 << endl;
+                        if(enable_readout) cout << "Constraint Violation: More classes than rooms at the same hour, day " << day <<  "hour " << j%8 << endl;
                         // printf("Constraint Violation: More classes than rooms at the same hour, day %d, hour %d \n", day, j%8 );
                         failedConstraints++;
                     }
@@ -383,20 +389,20 @@ public:
                     //sum the hour in the lecturers array
                     //Check that the lecturer is available in his preferences
                     if(LP[il][j]==0) { //means the lecturer isn't available
-                        cout << "Constraint Violation: lecturer" << lNames[il] <<  " was assigned to course " << cNames[i] <<  " in a busy slot "  << endl;
+                        if(enable_readout) cout << "Constraint Violation: lecturer" << lNames[il] <<  " was assigned to course " << cNames[i] <<  " in a busy slot "  << endl;
                         // printf("Constraint Violation:  lecturer %s was assigned to course %s in a busy slot \n", lNames[il], cNames[i]);
                         //failedConstraints++;
                     }
 
                     lectDay[il][day]++;//increase the hour
-                        //cout << " lecturer" << lNames[il] <<  " teaching hour "  << j << " in day " << day << endl;
-                        //cout << " lecturer hours " << lectDay[il][day] << endl;
+                        //if(enable_readout) cout << " lecturer" << lNames[il] <<  " teaching hour "  << j << " in day " << day << endl;
+                        //if(enable_readout) cout << " lecturer hours " << lectDay[il][day] << endl;
                     //Verify if the lecturer took a rest at least one hour
                     if(lectDay[il][day]>2){
                         il2=solution[i][j-1];
                         if(il2 !=-1 && il2==il)//the lecturer is teaching more than two hours without at least one hour break
                         {
-                            cout << "Constraint Violation: lecturer" << lNames[il] <<  " is teaching more than two hours without break"  << endl;
+                            if(enable_readout) cout << "Constraint Violation: lecturer" << lNames[il] <<  " is teaching more than two hours without break"  << endl;
                             // printf("Constraint Violation: lecturer %s is teaching more than two hours without break \n", lNames[i]);
                             failedConstraints++;
                         }
@@ -405,13 +411,13 @@ public:
                     //We added 1 hour per this course
                     hoursday++;
                     if(hoursday>2){
-                        cout << "Constraint Violation: More than two hours was assigned to course " << cNames[i] <<  " on day "   << day << endl;
+                        if(enable_readout) cout << "Constraint Violation: More than two hours was assigned to course " << cNames[i] <<  " on day "   << day << endl;
                         //printf("Constraint Violation: More than two hours for course %s in  day %d \n", cNames[i], day);
                     failedConstraints++;
                     }
                     else if(hoursday>1){//No separated hours
                         if(solution[i][j-1]==-1){
-                            cout << "Constraint Violation: two  separate session for course " << cNames[i] <<  " on day "   << day << endl;
+                            if(enable_readout) cout << "Constraint Violation: two  separate session for course " << cNames[i] <<  " on day "   << day << endl;
                             //printf("Constraint Violation: two separate session for course %s on day %d \n", cNames[i], day);
                             failedConstraints++;
                         }
@@ -469,7 +475,7 @@ public:
         int totalhours = accumulate(coursehours.begin(), coursehours.end(), 0);
 
         if(totalAllocateHours!=totalhours){
-            printf("You didn't allocate all the hours or allocate more than the hours");
+            printf("You didn't allocate all the hours or allocate more than the hours\n");
             //We penalize for any discrepancy
             penalization = 15*(double)abs(totalAllocateHours-totalhours);
             sum = sum+ penalization;
