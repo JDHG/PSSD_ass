@@ -16,26 +16,15 @@ IntMatrix Solution::Timetable;
 // double Eval(int argc, char* argv[]) {
 double Eval(string input_file, string time_table, bool debug) {
 
-  // if(argc !=3){
-  //   cerr << "usage: ./Eval ucs_problem_filename   ucs_solution filename"
-	//  << endl;
-  //   exit(EXIT_FAILURE);
-  // }
-
-  // string ucsFileName=string(argv[1]);
-  // string ucsSolnFileName=string(argv[2]);
-
   string ucsFileName = input_file;
   string ucsSolnFileName = time_table;
 
   ProblemUCS::readUCSInstance(ucsFileName);;
   double res ;   // place holder for result
 
-
     if(debug) cout << "calling readSolution " << endl;
   // if a feasible solution can be read
    if ( Solution::readSolution(ucsSolnFileName)) {
-
 
     Solution::printTimetable(Solution::Timetable, ProblemUCS::cNames, ProblemUCS::lNames);
 

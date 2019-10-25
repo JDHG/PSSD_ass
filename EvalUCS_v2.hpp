@@ -475,7 +475,7 @@ public:
         int totalhours = accumulate(coursehours.begin(), coursehours.end(), 0);
 
         if(totalAllocateHours!=totalhours){
-            printf("You didn't allocate all the hours or allocate more than the hours");
+            printf("You didn't allocate all the hours or allocate more than the hours\n");
             //We penalize for any discrepancy
             penalization = 15*(double)abs(totalAllocateHours-totalhours);
             sum = sum+ penalization;
