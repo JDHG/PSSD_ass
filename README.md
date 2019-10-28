@@ -79,3 +79,24 @@ Next problem: The Eval program simply prints info to the console, as it would of
 I will attempt to convert this Eval program into something we can call in our program. I'm sure there are ways we can do this using BASH commands or other external software/commands but I don't know how to do that yet, so I'll just stick with what I know for now.
 
 ///////////////////////////////////////////////////////////
+
+**28/10/19 -> Jason
+
+Starting on our optimisation today.
+
+We have a test case which produces a score of 3.36 which is good because we can now try to improve it. After a quick chat, the way we have decided to approach this first stage of optimisation is as follows:
+- Create multiple permutations of the input so we have courses and teachers shuffled around.
+- Run our basic assigner from from different starting days or go from right to left, etc.
+
+Once we have some of this functionality, we will be able to take the best timetable produced through all this shuffling and start optimising it more specifically through hour reassignments or similar methods. By doing it this way, we will hopefully produce a more optimal starting point for our further optimisations. It is possible that a less optimal timetable would happen to produce a better result at the second optimisation step, so we may keep the top 3 timetables or something like that.
+
+Because of how the Eval program has been integrated into our program, the input sorter now needs to:
+- read the input file into objects
+- create a set of shuffled parameter permutations
+- for each shuffled parameter set, produce a matching string which acts as an input file which can be fed to Eval to produce a score
+This will be a bit of work, but it will likely be worth it for an optimisation problem like this. We will be experimenting with writing the permutations to separate external files and then reading them in one at a time in our loop. If we can generate a bunch of files and keep all their names/directory locations in a string array, we can open each file into an ifstream one by one. This way we can avoid making significant changes to how the program reads input, while still creating multiple results in the one loop.
+
+Changing the assignment algorithm will also be a bit challenging. I am thinking I will change the assigner function to take an integer input which tells it which behaviour pattern to implement. This way, we can run the assigner in different ways within loops easily.
+As for changing how the hours are assigned, I suppose the easiest place to start will be to get it to assign from right to left instead of left to right. I will probably need to create switch statements with different loop structures within each. This may make the function a little less tractable. On the plus side, all the assignment validity checks (rooms, days, permissions) should work regardless of direction so I could just need to create a different set of for loops if I'm lucky.
+
+///////////////////////////////////////////////////////////
