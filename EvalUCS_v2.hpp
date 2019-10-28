@@ -237,7 +237,7 @@ public:
 /* converted to read fileName string into stringstream instead of treating as an external file 23-10-19 */
 
     stringstream sr;
-    sr.str(fileName);   // open the file
+    sr.str(fileName);
 
     int courses = ProblemUCS::mC;
 

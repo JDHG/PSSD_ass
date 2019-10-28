@@ -31,15 +31,19 @@ int main(int argc, char const * argv[]) {
     if(debug) cout << "Initiating timetable booking with input file :: '" << file_name << "'" << endl;
     if(debug) cout << "Debug is TRUE (" << debug << ")" << endl;
 
+    //create set of input permutations
+
     InputSort input = InputSort(debug, file_name);
     if(debug) input.print();
+
+    //create a string of the input permutation to give to Eval
 
     Assigner assigner = Assigner();
     vector<vector<int> > TT; //stores resulting time_table
     vector<vector<int> > best_TT;
     double current_eval_score = 99999;
 
-    //PROGRAM LOOP
+    //PROGRAM LOOP - attempt to create best starting timetable
     while(Assigner::not_complete && current_eval_score > 1)
     {
         //create_timetable needs a variable to determine its behaviour (what algorithm it tries)
@@ -60,6 +64,11 @@ int main(int argc, char const * argv[]) {
     }
 
     assigner.print_twin_vec(best_TT); //output generation
+
+
+    //second while loop to optimise best_TT specifically
+
+
 
     return 0;
 }
