@@ -37,6 +37,10 @@ bool Assigner::day_available(int hours_per_day, std::vector<int> tt_slot, int cu
     int day_start = (current_hour / hours_per_day) * hours_per_day;
     int day_end = day_start + hours_per_day;
 
+    //check here for 3+ hour assignments
+    //need to check 2 hours in front and behind in all columns for any other course assignments for a lecturer (within day bounds)
+    //need lectuerer number passed to this function
+
     for(int i = day_start; i < day_end; i++)
         if(tt_slot.at(i) >= 0)
         {
@@ -97,11 +101,11 @@ void Assigner::basic_assign(InputSort input, vector<Course> courses, vector<vect
             int k;
             switch(version)
             {
-                case  1: { k = LP_size-1; break; }    //right to left greedy
-                default: { k = 0; }                //left to right greedy
+                case  1: { k = LP_size-1; break; }  //right to left greedy
+                default: { k = 0; }                 //left to right greedy
             }
 
-            while(k != -2)
+            while(k != -2) //k = -2 when get_hour() determines we are finished based on version
             {
                 if(db) cout << "hour:" << k << ' ';
                 if(k >= 0)
@@ -121,22 +125,6 @@ void Assigner::basic_assign(InputSort input, vector<Course> courses, vector<vect
                 }
                 k = get_hour(k, LP_size, version); //get next hour based on version
             }
-
-            // for(int k = 0; k < LP_size; k++) //for each hour in teacher's preferences
-            // {
-            //     if(c->hours > 0 && day_available(hours_per_day, time_table->at(i), k))
-            //     {
-            //         vector<int> p = t.preferences;
-            //         if(permitted(p.at(k), permitted_LP_values) && room_available(input.n_rooms, k, t.id, *time_table))
-            //         {
-            //             time_table->at(i).at(k) = t.id; //write teacher's id to time_table[i][k]
-            //             if(db || input.debug) cout << "    add " << t.id << ':' << t.name << " LP(" << p.at(k) << ") @ course[hour] " << c->name << '['<<k<<']' << endl;
-            //             c->hours--;
-            //             if(c->hours == 0) break;
-            //         }
-            //     }
-            //     else while(k%hours_per_day != hours_per_day-1) k++; //proceed to next day if unavailable
-            // }
         }
     }
     //if incomplete, run again allowing assignment on LP = {1 || 2}
