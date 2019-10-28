@@ -100,3 +100,13 @@ Changing the assignment algorithm will also be a bit challenging. I am thinking 
 As for changing how the hours are assigned, I suppose the easiest place to start will be to get it to assign from right to left instead of left to right. I will probably need to create switch statements with different loop structures within each. This may make the function a little less tractable. On the plus side, all the assignment validity checks (rooms, days, permissions) should work regardless of direction so I could just need to create a different set of for loops if I'm lucky.
 
 ///////////////////////////////////////////////////////////
+
+**28/10/19 -> Jason
+
+I have adapted our program to run two different ways now: left to right and right to left.  To avoid writing separate loops in the assigner function, I realised that the only thing my assigner truly needs to care about is the hour it's looking at. So I just made some new functions to manipulate the hour based on a version number which is passed to the assigner.
+
+I also had to edit the Eval program to flush its static containers when new input came along and only collect input if new input is coming. It was initially reading the input every loop and doubling up all the lecturers/courses/etc. Now it will only read an input file when told (which will be good for performance too).
+
+There is one new bug I'll be fixing next, which is the lecturers can be assigned to do >2 hours in a row if they teach different courses (2 on one course, then 1 or more on another immediately after). My functions only make sure they can't do more than 2 hours for one course at a time, so this will need to change so we can never have >2 hours without a break.
+
+///////////////////////////////////////////////////////////
