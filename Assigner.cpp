@@ -56,9 +56,33 @@ bool Assigner::permitted(int preference_val, vector<int> permitted_LP_values)
     return false;
 }
 
-void Assigner::basic_assign(InputSort input, vector<Course> courses, vector<vector<int> > * time_table, int n_rooms, vector<int> permitted_LP_values, int hours_per_day, int run)
+int Assigner::get_hour(int current_hour, int hour_limit, int version)
 {
-    if(db || input.debug) cout << "Assigner :: basic_assign :: run number ("<<run<<")" << endl;
+    if(db) cout << "Assigner :: get_hour" << endl;
+    switch(version)
+    {
+        case  1: { current_hour--; break; }
+        default: current_hour++;
+    }
+    if(current_hour < 0 || current_hour >= hour_limit) return -2;
+    else return current_hour;
+}
+
+int Assigner::advance_day(int k, int hours_per_day, int version)
+{
+    if(db) cout << "Assigner :: advance_day" << endl;
+    if(k == -2 || k < 0 || k >= 40) return -2;
+    switch(version)
+    {
+        case  1: { if(k == 0) return -2; while(k % hours_per_day != 1) k--; return k; }       //previous day
+        default: { while(k % hours_per_day != hours_per_day-1) k++; }   //next day
+    }
+    return k;
+}
+
+void Assigner::basic_assign(InputSort input, vector<Course> courses, vector<vector<int> > * time_table, int n_rooms, vector<int> permitted_LP_values, int hours_per_day, int run, int version)
+{
+    if(db || input.debug) cout << "Assigner :: basic_assign :: version ("<<version<<") :: run number ("<<run<<")" << endl;
     if(run > 2) return; //run number is recursive depth -> forces return after 3 runs which goes through all permitted_LP_values vectors
 
     for(int i = 0; i < courses.size(); i++) //for each course
@@ -67,30 +91,61 @@ void Assigner::basic_assign(InputSort input, vector<Course> courses, vector<vect
         for(int j = 0; j < c->teachers.size(); j++) //for each assigned course teacher
         {
             Teacher t = c->teachers.at(j);
-            for(int k = 0; k < t.preferences.size(); k++) //for each hour in teacher's preferences
+            int LP_size = t.preferences.size();
+
+            //assign starting hour to k based on version behaviour
+            int k;
+            switch(version)
             {
-                if(c->hours > 0 && day_available(hours_per_day, time_table->at(i), k))
-                {
-                    vector<int> p = t.preferences;
-                    if(permitted(p.at(k), permitted_LP_values) && room_available(input.n_rooms, k, t.id, *time_table))
-                    {
-                        time_table->at(i).at(k) = t.id; //write teacher's id to time_table[i][k]
-                        if(db || input.debug) cout << "    add " << t.id << ':' << t.name << " LP(" << p.at(k) << ") @ course[hour] " << c->name << '['<<k<<']' << endl;
-                        c->hours--;
-                        if(c->hours == 0) break;
-                    }
-                }
-                else while(k%hours_per_day != hours_per_day-1) k++; //proceed to next day if unavailable
+                case  1: { k = LP_size-1; break; }    //right to left greedy
+                default: { k = 0; }                //left to right greedy
             }
+
+            while(k != -2)
+            {
+                if(db) cout << "hour:" << k << ' ';
+                if(k >= 0)
+                {
+                    if(c->hours > 0 && day_available(hours_per_day, time_table->at(i), k))
+                    {
+                        vector<int> p = t.preferences;
+                        if(permitted(p.at(k), permitted_LP_values) && room_available(input.n_rooms, k, t.id, *time_table))
+                        {
+                            time_table->at(i).at(k) = t.id; //write teacher's id to time_table[i][k]
+                            if(db || input.debug) cout << "    add " << t.id << ':' << t.name << " LP(" << p.at(k) << ") @ course[hour] " << c->name << '['<<k<<']' << endl;
+                            c->hours--;
+                            if(c->hours == 0) break;
+                        }
+                    }
+                    else k = advance_day(k, hours_per_day, version); //proceed to next day if unavailable
+                }
+                k = get_hour(k, LP_size, version); //get next hour based on version
+            }
+
+            // for(int k = 0; k < LP_size; k++) //for each hour in teacher's preferences
+            // {
+            //     if(c->hours > 0 && day_available(hours_per_day, time_table->at(i), k))
+            //     {
+            //         vector<int> p = t.preferences;
+            //         if(permitted(p.at(k), permitted_LP_values) && room_available(input.n_rooms, k, t.id, *time_table))
+            //         {
+            //             time_table->at(i).at(k) = t.id; //write teacher's id to time_table[i][k]
+            //             if(db || input.debug) cout << "    add " << t.id << ':' << t.name << " LP(" << p.at(k) << ") @ course[hour] " << c->name << '['<<k<<']' << endl;
+            //             c->hours--;
+            //             if(c->hours == 0) break;
+            //         }
+            //     }
+            //     else while(k%hours_per_day != hours_per_day-1) k++; //proceed to next day if unavailable
+            // }
         }
     }
     //if incomplete, run again allowing assignment on LP = {1 || 2}
     if(run == 0 && !is_complete(*time_table, courses, input.debug))
-        basic_assign(input, courses, time_table, input.n_rooms, {1, 2}, hours_per_day, ++run);
+        basic_assign(input, courses, time_table, input.n_rooms, {1, 2}, hours_per_day, ++run, version);
 
     //if still incomplete, run again allowing assignment on LP = {1 || 2 || 5}
     else if(run == 1 && !is_complete(*time_table, courses, input.debug))
-        basic_assign(input, courses, time_table, input.n_rooms, {1, 2, 5}, hours_per_day, ++run);
+        basic_assign(input, courses, time_table, input.n_rooms, {1, 2, 5}, hours_per_day, ++run, version);
 
     else if(input.debug && !is_complete(*time_table, courses, input.debug))
         cout << "* * * INCOMPLETE SOLUTION -> some course hours were not assigned * * *" << endl;
@@ -138,13 +193,13 @@ bool Assigner::is_complete(std::vector<vector<int> > time_table, std::vector<Cou
 
 //********************************************************************************************************************//
 
-vector<vector<int> > Assigner::create_timetable(InputSort input, int hours_per_day)
+vector<vector<int> > Assigner::create_timetable(InputSort input, int hours_per_day, int version)
 {
     if(db) cout << "Assigner :: create_timetable" << endl;
     vector<vector<int> > time_table = initialise_empty_timetable(input.n_courses, 5, hours_per_day);
 
     //populate time table -> allowing worse LP selections if returned time_table is incomplete (course hours outstanding)
-    basic_assign(input, input.courses, &time_table, input.n_rooms, {1}, hours_per_day, 0);
+    basic_assign(input, input.courses, &time_table, input.n_rooms, {1}, hours_per_day, 0, version);
 
     //display results if debug enabled
     if(input.debug) print_twin_vec_debug(time_table, input.courses, hours_per_day);
