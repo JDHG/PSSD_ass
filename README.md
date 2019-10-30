@@ -110,3 +110,21 @@ I also had to edit the Eval program to flush its static containers when new inpu
 There is one new bug I'll be fixing next, which is the lecturers can be assigned to do >2 hours in a row if they teach different courses (2 on one course, then 1 or more on another immediately after). My functions only make sure they can't do more than 2 hours for one course at a time, so this will need to change so we can never have >2 hours without a break.
 
 ///////////////////////////////////////////////////////////
+
+**31/10/2019 -> TommyG
+
+I've been a bit sparse on my reporting here so this will be bit of a dump. Anyway, here goes . . .
+
+As Jason mentioned above we were keen to experiment "...with writing...permutations to separate external files." This is so significant changes needn't be made to how our program reads files, minimizing the amount of code we'll write that will essentially be accomplishing the exact same thing.
+
+I opted for this job because I had already written the initiall input ripping class and so was familiar with the code I could copy for this task. I started by examining my InputSort class and then essentially stripped out the functioning parts and tried to improve the jankier bits. For example, the initial input sorting where the file is read failed to nicely compartmentalise the data previously because I was attempting to read it into heap memory and delete along the way. I decided that for simplicity I would rely on the compiler. Also, I mostly read through the entire file before splitting the data into separate structures.
+
+Next up was writing to a file with correct formatting. This task was new to me but actually quite easy!
+(1) create a fostream object
+(2) insert strings with the << operator
+(3) then close the object
+This meant reading through the member data in the correct order and specifying a file name.
+
+I then took this function (write_to_file(..)) and overloaded it with an int array. The array is meant to specify the order of access and so can manipulate the order of file content. This is designed to be uber-flexible -> if we want different kinds of permutations we have to write code that saves the permutation order into an array (which is the argument for our file writing code).
+
+The first permutation order we've tried is a cyclic one -> {a,b,c} :: {b,c,a} :: {c,a,b}. The classes are arranged in a cyclic way. In future we are hoping to implement many more permutations. The key is not creating too many because permutations are in the order of factorial magnitude, which gets crazy big crazy fast (e.g. having ten classes == 10! > 3 million!!!).
