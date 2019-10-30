@@ -34,11 +34,12 @@ public:
     };
 
     //Cror
-    InputPermute(std::string);
+    InputPermute(std::string, const char *);
+    void set_raw_input(char const * file_name); /*Rip file into a string */
+    void set_input(const char *);               /*Rip string into class members */
 
     //File reading functions
     std::string pop_input();
-    void set_raw_input(char const * file_name);
 
 
     //set input file to this deque of inputs
@@ -53,8 +54,7 @@ public:
     std::vector<Lecturer> lecturers;
 
     //functions that drives input permutation
-    std::vector<std::string> permute_input(const char *);
-    std::string permute();
+    std::vector<std::string> permute();
     std::string write_to_file(int);
     std::string write_to_file(int, std::vector<int>);
 };

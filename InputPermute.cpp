@@ -70,20 +70,37 @@ vector<int> s_to_i_vector(string s, string separator)
     return ints;
 }
 
-InputPermute::InputPermute(string fnp)
+InputPermute::InputPermute(string fnp, const char * file_name)
 {
     file_name_prefix = fnp;
+    set_input(file_name);
 }
-
-string InputPermute::pop_input()
+void InputPermute::set_raw_input(char const * file_name)
 {
-    string temp = input.front(); input.pop_front();
-    return temp;
+    //Open file
+    freopen(file_name, "r", stdin);
+
+    string input_line = "";
+    deque<string> * input_lines;
+    input_lines = new deque<string>;
+
+    //Get all lines and stuff them into vector
+    while(getline(cin, input_line))
+    {
+        if(input_line.back() == '\x0D')
+        input_line.pop_back();
+        input_lines->push_back(input_line);
+    }
+    fclose(stdin);
+
+    input = *input_lines;
+    delete input_lines;
+    return;
 }
-
-vector<string> InputPermute::permute_input(const char * file_name)
+//Push input file into class structure. Called by constructor
+void InputPermute::set_input(const char * file_name)
 {
-    vector<string> file_names = {}; string line = "";
+    string line = "";
     set_raw_input(file_name);
 
     string Rooms        = "";
@@ -126,9 +143,14 @@ vector<string> InputPermute::permute_input(const char * file_name)
         lecturers.push_back(Lecturer(lecturer_names.at(i), s_to_i_vector(clean_line(&LP_line, ""), ",")));
     }
 
-    // file_names.push_back(permute());
+    return;
+}
 
-    return file_names;
+//reading pop
+string InputPermute::pop_input()
+{
+    string temp = input.front(); input.pop_front();
+    return temp;
 }
 
 /* permute to next cycle */
@@ -145,11 +167,11 @@ vector<int> vector_starting_from(vector<int> input, int start)
     }
     return temp;
 }
-
-string InputPermute::permute()
+//Default permuter -> reads into files in cycle
+vector<string> InputPermute::permute()
 {
     int file_number = 0; vector<int> access_order = {};
-
+    vector<string> files = {};
     for(int i = 0; i < n_courses; i++)
     {
         access_order.push_back(i);
@@ -157,11 +179,10 @@ string InputPermute::permute()
 
     //Shuffle through classes -> A, b, c, d :: b, c, d, A :: c, d, A, b :: d, A, b, c
     for(int i = 0; i < access_order.size(); i++)
-        write_to_file(i, vector_starting_from(access_order, i));
+        files.push_back(write_to_file(i, vector_starting_from(access_order, i)));
 
-    return "err";
+    return files;
 }
-
 
 /* Strip members into a file */
 string InputPermute::write_to_file(int file_number, vector<int> access_order)
@@ -238,27 +259,4 @@ string InputPermute::write_to_file(int file_number)
 
     ofs.close();
     return file_name;
-}
-
-void InputPermute::set_raw_input(char const * file_name)
-{
-    //Open file
-    freopen(file_name, "r", stdin);
-
-    string input_line = "";
-    deque<string> * input_lines;
-    input_lines = new deque<string>;
-
-    //Get all lines and stuff them into vector
-    while(getline(cin, input_line))
-    {
-        if(input_line.back() == '\x0D')
-            input_line.pop_back();
-        input_lines->push_back(input_line);
-    }
-    fclose(stdin);
-
-    input = *input_lines;
-    delete input_lines;
-    return;
 }
