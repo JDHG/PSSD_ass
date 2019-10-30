@@ -28,6 +28,7 @@ void InputSort::set_raw_input(char const * file_name)
         fclose(stdin);
 
         raw_input = *input_lines;
+        // delete input_lines;
         return;
     }
 
