@@ -128,3 +128,13 @@ This meant reading through the member data in the correct order and specifying a
 I then took this function (write_to_file(..)) and overloaded it with an int array. The array is meant to specify the order of access and so can manipulate the order of file content. This is designed to be uber-flexible -> if we want different kinds of permutations we have to write code that saves the permutation order into an array (which is the argument for our file writing code).
 
 The first permutation order we've tried is a cyclic one -> {a,b,c} :: {b,c,a} :: {c,a,b}. The classes are arranged in a cyclic way. In future we are hoping to implement many more permutations. The key is not creating too many because permutations are in the order of factorial magnitude, which gets crazy big crazy fast (e.g. having ten classes == 10! > 3 million!!!).
+
+///////////////////////////////////////////////////////////
+
+**31/10/19 -> Jason
+
+Fixed the bug that was complaining about >2 hour assignments without a break. Unfortunately, the eval program still calls it out. Not sure if this is a bug in the eval program or if I just don't understand what constitutes a 'break' in this assignment. I have made a discussion post about this which will hopefully help sort it out.
+
+The assigner now creates 2 timetables for any input: one from left to right and another from right to left. The timetables are compared and the one with the best fitness value is returned. This timetable will be the one that will undergo iterative improvement. Once Tom's input permuter is working and we integrate it into the program, we can get stuck into this.
+
+///////////////////////////////////////////////////////////
