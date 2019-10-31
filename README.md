@@ -148,3 +148,15 @@ We are seriously considering abandoning this route as it is a decent amount of c
 As it stands, we are hoping to implement basic permutations of the input in the initial assigning algorithm.
 
 ///////////////////////////////////////////////////////////
+
+**31/10/19 -> Jason
+
+We have started looking at how we can iteratively improve our timetables. We have decided on a few simple rules to help us get started:
+- We will only try and improve a restricted number of iterations (there could be infinite steps to take otherwise)
+- An improvement is made if:
+    - we move a higher value LP pref to a lower value one (small gain)
+    - we are able to allocate a previously unallocated hour (large gain)
+    
+Given that allocating more hours is more desireable, we will focus on this first. We will need to establish some sort of heuristic, or some identifiable pattern that allows us to manipulate the time table and introduce a new hour. We can start doing this by just inspecting our outputs and messing with them on paper. If we can produce an algorithm that moves hours and assigns new ones, we will have made a big improvement to our program.
+
+///////////////////////////////////////////////////////////
