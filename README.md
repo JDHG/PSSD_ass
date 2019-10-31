@@ -138,3 +138,13 @@ Fixed the bug that was complaining about >2 hour assignments without a break. Un
 The assigner now creates 2 timetables for any input: one from left to right and another from right to left. The timetables are compared and the one with the best fitness value is returned. This timetable will be the one that will undergo iterative improvement. Once Tom's input permuter is working and we integrate it into the program, we can get stuck into this.
 
 ///////////////////////////////////////////////////////////
+
+**31/10/19 -> TommyG
+
+Having problems with the input permutation in that file writing appears to be stored in a buffer and then on termination of the program these buffered writes are flushed to files. This means that we'll have to handle data permutation internally and begin recoding sections of the input sorting class.
+
+We are seriously considering abandoning this route as it is a decent amount of code to walk through and adapt. If I were to have a go I would definitely want to use the original input sorting class as a reference only. However, any changes (at all!) to the original input sorting code could adversely affect code that generates timetables, so this makes generating inspired code difficult to fit with the rest of the program as it is now.
+
+As it stands, we are hoping to implement basic permutations of the input in the initial assigning algorithm.
+
+///////////////////////////////////////////////////////////
