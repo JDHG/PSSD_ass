@@ -15,6 +15,9 @@ class Assigner
     //create return vector-vector of -1's
     std::vector<vector<int> > initialise_empty_timetable(int n_courses, int n_days, int n_hours);
 
+    //prevent lecturer from being assigned >2 hours in a row
+    bool two_hour_max(int current_hour, int incoming_teacher_id, vector<vector<int> > time_table, int hours_per_day);
+
     //check if number of rooms has been exhausted and prevents double bookings of teachers
     bool room_available(int n_rooms, int current_hour, int incoming_teacher_id, vector<vector<int> > time_table);
 

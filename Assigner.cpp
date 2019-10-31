@@ -17,6 +17,36 @@ vector<vector<int> > Assigner::initialise_empty_timetable(int n_courses, int n_d
     return tt;
 }
 
+bool Assigner::two_hour_max(int current_hour, int incoming_teacher_id, vector<vector<int> > time_table, int hours_per_day)
+{
+    if(db) cout << "Assigner :: two_hour_max" << endl;
+    int day_start = (current_hour / hours_per_day) * hours_per_day;
+    int day_end = day_start + hours_per_day;
+
+    if(day_end > 39) day_end = 39;
+
+    int consec_hours = 0;
+
+    if(current_hour-1 >= day_start)
+        for(int i = 0; i < time_table.size(); i++)
+            if(time_table.at(i).at(current_hour-1) == incoming_teacher_id) consec_hours++;
+
+    if(current_hour-2 >= day_start)
+        for(int i = 0; i < time_table.size(); i++)
+            if(time_table.at(i).at(current_hour-2) == incoming_teacher_id) consec_hours++;
+
+    if(current_hour+1 <= day_end)
+        for(int i = 0; i < time_table.size(); i++)
+            if(time_table.at(i).at(current_hour+1) == incoming_teacher_id) consec_hours++;
+
+    if(current_hour+2 <= day_end)
+        for(int i = 0; i < time_table.size(); i++)
+            if(time_table.at(i).at(current_hour+2) == incoming_teacher_id) consec_hours++;
+
+    if(consec_hours >= 2) return false;
+    else return true;
+}
+
 bool Assigner::room_available(int n_rooms, int current_hour, int incoming_teacher_id, vector<vector<int> > time_table)
 {
     if(db) cout << "Assigner :: room_available" << endl;
@@ -26,6 +56,7 @@ bool Assigner::room_available(int n_rooms, int current_hour, int incoming_teache
         int target_hour = time_table.at(i).at(current_hour);
         if(target_hour >= 0) rooms_in_use++;
         if(rooms_in_use >= n_rooms || target_hour == incoming_teacher_id) return false; //rooms all used || teacher being double booked
+
     }
     return true;
 }
@@ -37,18 +68,13 @@ bool Assigner::day_available(int hours_per_day, std::vector<int> tt_slot, int cu
     int day_start = (current_hour / hours_per_day) * hours_per_day;
     int day_end = day_start + hours_per_day;
 
-    //check here for 3+ hour assignments
-    //need to check 2 hours in front and behind in all columns for any other course assignments for a lecturer (within day bounds)
-    //need lectuerer number passed to this function
-
     for(int i = day_start; i < day_end; i++)
         if(tt_slot.at(i) >= 0)
         {
             if(i < day_end-1)
-            {
                 if(tt_slot.at(++i) < 0 && i == current_hour) return true; //allow 2-hour session assignment
-                else return false; //day has a session allocated already
-            }
+
+            return false; //day has a session allocated already
         }
     return true; //all hours are available for this course on this day
 }
@@ -113,7 +139,10 @@ void Assigner::basic_assign(InputSort input, vector<Course> courses, vector<vect
                     if(c->hours > 0 && day_available(hours_per_day, time_table->at(i), k))
                     {
                         vector<int> p = t.preferences;
-                        if(permitted(p.at(k), permitted_LP_values) && room_available(input.n_rooms, k, t.id, *time_table))
+                        if  (    permitted(p.at(k), permitted_LP_values)
+                              && room_available(input.n_rooms, k, t.id, *time_table)
+                              && two_hour_max(k, t.id, *time_table, hours_per_day)
+                            )
                         {
                             time_table->at(i).at(k) = t.id; //write teacher's id to time_table[i][k]
                             if(db || input.debug) cout << "    add " << t.id << ':' << t.name << " LP(" << p.at(k) << ") @ course[hour] " << c->name << '['<<k<<']' << endl;

@@ -73,6 +73,7 @@ int main(int argc, char const * argv[]) {
         new_file = false;
     }
     if(debug) cout << "number of timetables created = " << n_timetables_created << endl;
+    if(debug) cout << "fitness of final time_table  = " << current_eval_score << endl;
     assigner.print_twin_vec(best_TT); //output generation
 
 
