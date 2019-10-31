@@ -186,7 +186,7 @@ bool Assigner::is_complete(std::vector<vector<int> > time_table, std::vector<Cou
 
 
 
-vector<vector<int> > Assigner::improver(vector<vector<int> > time_table, InputSort input)
+vector<vector<int> > Assigner::improve(vector<vector<int> > time_table, InputSort input)
 {
 
 }

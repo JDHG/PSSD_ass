@@ -77,8 +77,8 @@ int main(int argc, char const * argv[]) {
     assigner.print_twin_vec(best_TT); //output generation
 
 
-    //second while loop to optimise best_TT specifically
-    // assigner.improver()
+    // while()
+    // assigner.improve()
 
 
     return 0;

@@ -45,8 +45,8 @@ class Assigner
 
     /* ITERATIVE IMPROVEMENT FUNCTIONALITY */
 
-    //returns a time table that has undergone iterative improvement
-    std::vector<std::vector<int> > improver(std::vector<std::vector<int> > time_table, InputSort input);
+    //returns a time table that has undergone one step of iterative improvement
+    std::vector<std::vector<int> > improve(std::vector<std::vector<int> > time_table, InputSort input);
 
 
     //print time_table in readable debug format
