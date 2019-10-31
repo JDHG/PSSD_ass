@@ -58,6 +58,17 @@ public:
 
   // function to read in UCS problem specification from a file
   static  bool readUCSInstance(string fileName){
+
+      //clear all static variables for new input
+      rooms = 0;
+      mC = 0;
+      cHours.clear();
+      cNames.clear();
+      nL = 0;
+      lNames.clear();
+      TL.clear();
+      LP.clear();
+
     string input;
     ifstream sr(fileName.c_str());
     if (! sr.is_open()) return false;
@@ -365,6 +376,7 @@ public:
         for (int i = 0; i < courses; i++) {
             day=0;
             for (int j = 0; j < hoursWeek; j++) {
+                // cout << '['<<i<<']' <<'['<<j<<']' << endl;
                 il=solution[i][j];//indice lecturer
                 if(il!=-1){
                     // check lecturer is allocated to course
