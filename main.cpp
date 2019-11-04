@@ -76,6 +76,9 @@ int main(int argc, char const * argv[]) {
     if(debug) cout << "fitness of final time_table  = " << current_eval_score << endl;
     assigner.print_twin_vec(best_TT); //output generation
 
+    //get unfinished course indexes
+    vector<int> UF = assigner.get_remaining_hours(best_TT, input.courses);
+    assigner.print_vec(UF);
 
     // while()
     // assigner.improve()

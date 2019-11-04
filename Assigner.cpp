@@ -184,11 +184,28 @@ bool Assigner::is_complete(std::vector<vector<int> > time_table, std::vector<Cou
     return complete;
 }
 
-
-
-vector<vector<int> > Assigner::improve(vector<vector<int> > time_table, InputSort input)
+vector<int> Assigner::get_remaining_hours(vector<vector<int> > time_table, vector<Course> courses)
 {
+    vector<int> incomplete_courses;
+    for(int i = 0; i < time_table.size(); i++)
+    {
+        int hours = courses.at(i).hours;
+        for(int j = 0; j < time_table.at(i).size(); j++)
+        {
+            if(time_table.at(i).at(j) >= 0) hours--;
+        }
+        if(hours > 0) incomplete_courses.push_back(i);
+    }
+    return incomplete_courses;
+}
 
+vector<vector<int> > Assigner::improve(vector<vector<int> > time_table, InputSort input, vector<int> incomplete_courses)
+{
+    //find assigned single hours
+
+    //check constraints (room, >2 hours, double book)
+
+    //if available, assign double hour sesh
 }
 
 
