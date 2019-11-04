@@ -4,7 +4,7 @@
 #include <deque>
 #include <vector>
 #include <iostream>
-#include "structs.cpp"
+#include "structs.h"
 
 class InputSort
 {

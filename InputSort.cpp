@@ -1,4 +1,9 @@
+#ifndef INPUTSORT_CPP
+#define INPUTSORT_CPP
+//
 #include "InputSort.h"
+// #include "Structs.h"
+// #include "Structs.cpp"
 
 using namespace std;
 
@@ -190,3 +195,5 @@ InputSort::InputSort(bool b, char const * file_name)
     delete teacher_names;
     delete teacher_lecturer_matrix;
 }
+
+#endif

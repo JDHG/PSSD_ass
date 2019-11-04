@@ -1,6 +1,10 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
+#include <iostream>
+#include <vector>
+
+
 struct Teacher
 {
     std::string name;

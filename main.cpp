@@ -1,8 +1,13 @@
 #include <iostream>
 #include <vector>
 #include <deque>
-#include "InputSort.cpp"
+// #include "InputSort.cpp"
+#include "InputSort.h"
+#include "Structs.h"
 
+
+
+//TestYuuuu
 using namespace std;
 
 //Arguments to main are <debug> <file_name>

@@ -1,3 +1,6 @@
+#ifndef STRUCTS_CPP
+#define STRUCTS_CPP
+
 #include "structs.h"
 
 using namespace std;
@@ -44,3 +47,5 @@ void Teacher::print()
         cout << preference << ",";
     cout << endl;
 }
+
+#endif
