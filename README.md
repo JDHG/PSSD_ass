@@ -138,3 +138,25 @@ Fixed the bug that was complaining about >2 hour assignments without a break. Un
 The assigner now creates 2 timetables for any input: one from left to right and another from right to left. The timetables are compared and the one with the best fitness value is returned. This timetable will be the one that will undergo iterative improvement. Once Tom's input permuter is working and we integrate it into the program, we can get stuck into this.
 
 ///////////////////////////////////////////////////////////
+
+**31/10/19 -> TommyG
+
+Having problems with the input permutation in that file writing appears to be stored in a buffer and then on termination of the program these buffered writes are flushed to files. This means that we'll have to handle data permutation internally and begin recoding sections of the input sorting class.
+
+We are seriously considering abandoning this route as it is a decent amount of code to walk through and adapt. If I were to have a go I would definitely want to use the original input sorting class as a reference only. However, any changes (at all!) to the original input sorting code could adversely affect code that generates timetables, so this makes generating inspired code difficult to fit with the rest of the program as it is now.
+
+As it stands, we are hoping to implement basic permutations of the input in the initial assigning algorithm.
+
+///////////////////////////////////////////////////////////
+
+**31/10/19 -> Jason
+
+We have started looking at how we can iteratively improve our timetables. We have decided on a few simple rules to help us get started:
+- We will only try and improve a restricted number of iterations (there could be infinite steps to take otherwise)
+- An improvement is made if:
+    - we move a higher value LP pref to a lower value one (small gain)
+    - we are able to allocate a previously unallocated hour (large gain)
+    
+Given that allocating more hours is more desireable, we will focus on this first. We will need to establish some sort of heuristic, or some identifiable pattern that allows us to manipulate the time table and introduce a new hour. We can start doing this by just inspecting our outputs and messing with them on paper. If we can produce an algorithm that moves hours and assigns new ones, we will have made a big improvement to our program.
+
+///////////////////////////////////////////////////////////

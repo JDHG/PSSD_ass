@@ -31,7 +31,7 @@ public:
     std::vector<std::string> sto_vector(std::string, std::string);
 
 
-
+    InputSort(bool, std::deque<std::string>);
     InputSort(bool, char const * );
     void print();
 };
