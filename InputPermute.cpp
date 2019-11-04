@@ -76,6 +76,14 @@ InputPermute::InputPermute(string fnp, const char * file_name)
     file_name_prefix = fnp;
     set_input(file_name);
 }
+
+InputPermute::InputPermute(const char * file_name, bool b)
+{
+    file_name_prefix = "NOT FORE FILE CREATION";
+    set_input(file_name);
+    debug = b;
+}
+
 void InputPermute::set_raw_input(char const * file_name)
 {
     //Open file
@@ -170,29 +178,29 @@ vector<int> vector_starting_from(vector<int> input, int start)
     return temp;
 }
 //Default permuter -> reads into files in cycle
-vector<const char *> InputPermute::permute(unsigned int n_permutations)
-{
-    int file_number = 0; vector<int> access_order = {};
-    vector<const char *> files = {};
-    for(int i = 0; i < n_courses; i++)
-    {
-        access_order.push_back(i);
-    }
+// vector<const char *> InputPermute::permute(unsigned int n_permutations)
+// {
+//     int file_number = 0; vector<int> access_order = {};
+//     vector<const char *> files = {};
+//     for(int i = 0; i < n_courses; i++)
+//     {
+//         access_order.push_back(i);
+//     }
+//
+//     //Shuffle through classes -> A, b, c, d :: b, c, d, A :: c, d, A, b :: d, A, b, c
+//     n_permutations /= n_courses; n_permutations++;
+//     for(int i = 0; i < access_order.size(); i++)
+//         for(int j = 0; j < n_permutations; j++)
+//         {
+//             files.push_back(write_to_file(file_number, vector_starting_from(access_order, i)));
+//             next_permutation(access_order.begin(), access_order.end());
+//             file_number++;
+//         }
+//
+//     return files;
+// }
 
-    //Shuffle through classes -> A, b, c, d :: b, c, d, A :: c, d, A, b :: d, A, b, c
-    n_permutations /= n_courses; n_permutations++;
-    for(int i = 0; i < access_order.size(); i++)
-        for(int j = 0; j < n_permutations; j++)
-        {
-            files.push_back(write_to_file(file_number, vector_starting_from(access_order, i)));
-            next_permutation(access_order.begin(), access_order.end());
-            file_number++;
-        }
-
-    return files;
-}
-
-deque<InputSort> InputPermute::permute(unsigned int n_permutations, char type)
+deque<InputSort> InputPermute::permute(unsigned int n_permutations)
 {
     deque<InputSort> input_sorts = {}; vector<int> access_order = {};
     deque<deque<string>> inputs = {};
@@ -210,8 +218,9 @@ deque<InputSort> InputPermute::permute(unsigned int n_permutations, char type)
     for(deque<string> input : inputs)
         input_sorts.push_back(InputSort(true, input));
 
-    for(InputSort input_sort : input_sorts)
-        input_sort.print();
+    if(debug)
+        for(InputSort input_sort : input_sorts)
+            input_sort.print();
 
     return input_sorts;
 }
