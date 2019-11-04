@@ -1,5 +1,6 @@
 //InputPermute.cpp
 #include "InputPermute.h"
+#include "InputSort.cpp"
 
 using namespace std;
 
@@ -7,7 +8,7 @@ string clean_line(string * line, string front)
 {
     //erase front off of line
     if(line->substr(0, front.size()) == front) line->erase(0, front.size());
-    else { cout << "clean_line :: Called with incorrect front" << endl; exit(1);}
+    else { cout << "clean_line :: Called with incorrect front (" << front << ")" << endl; exit(1);}
 
     //clean whitespace either end
     while(line->front() == ' ') line->erase(0, 1);
@@ -114,6 +115,7 @@ void InputPermute::set_input(const char * file_name)
     string TL_line = "";
     string LP_line = "";
 
+    cout << Rooms << endl;
     Rooms       = pop_input(); n_rooms = stoi(clean_line(&Rooms, "Rooms"));
     /*Courses */
     Courses     = pop_input(); n_courses = stoi(clean_line(&Courses, "Courses"));
@@ -168,24 +170,100 @@ vector<int> vector_starting_from(vector<int> input, int start)
     return temp;
 }
 //Default permuter -> reads into files in cycle
-vector<string> InputPermute::permute()
+vector<const char *> InputPermute::permute(unsigned int n_permutations)
 {
     int file_number = 0; vector<int> access_order = {};
-    vector<string> files = {};
+    vector<const char *> files = {};
     for(int i = 0; i < n_courses; i++)
     {
         access_order.push_back(i);
     }
 
     //Shuffle through classes -> A, b, c, d :: b, c, d, A :: c, d, A, b :: d, A, b, c
+    n_permutations /= n_courses; n_permutations++;
     for(int i = 0; i < access_order.size(); i++)
-        files.push_back(write_to_file(i, vector_starting_from(access_order, i)));
+        for(int j = 0; j < n_permutations; j++)
+        {
+            files.push_back(write_to_file(file_number, vector_starting_from(access_order, i)));
+            next_permutation(access_order.begin(), access_order.end());
+            file_number++;
+        }
 
     return files;
 }
 
+deque<InputSort> InputPermute::permute(unsigned int n_permutations, char type)
+{
+    deque<InputSort> input_sorts = {}; vector<int> access_order = {};
+    deque<deque<string>> inputs = {};
+    for(int i = 0; i < n_courses; i++)
+        access_order.push_back(i);
+
+    n_permutations /= n_courses; n_permutations++;
+    for(int i = 0; i < access_order.size(); i++)
+        for(int j = 0; j < n_permutations; j++)
+        {
+            inputs.push_back(write_to_string_vector(vector_starting_from(access_order, i)));
+            next_permutation(access_order.begin(), access_order.end());
+        }
+
+    for(deque<string> input : inputs)
+        input_sorts.push_back(InputSort(true, input));
+
+    for(InputSort input_sort : input_sorts)
+        input_sort.print();
+
+    return input_sorts;
+}
+
+/*Strip members into a vector */
+deque<string> InputPermute::write_to_string_vector(vector<int> access_order)
+{
+    deque<string> input = {}; string line = "";
+    input.push_back("Rooms       " + to_string(n_rooms));       //Get Rooms
+    input.push_back("Courses     " + to_string(n_courses));     //Get Courses
+
+    line = "Hours       "; int hours = 0;                    //Get Hours
+    for(int index : access_order)
+    {
+        line.append(to_string(classes.at(index).hours));
+        if(index != access_order.back()) line.append(", ");
+    }
+    input.push_back(line); line.clear();
+
+    line = "Names       ";                                  //Get course_names
+    for(int index : access_order)
+    {
+        line = line + classes.at(index).name;
+        if(index != access_order.back()) line.append(", ");
+    }
+    input.push_back(line); line.clear();
+
+    input.push_back("Lecturers   " + to_string(n_lecturers));             //Get Lecturers
+    for(int i = 0; i < n_lecturers - 1; i++)
+        line = line + lecturers.at(i).name + ", ";
+    line = line + lecturers.back().name;
+    input.push_back(line);
+
+    input.push_back("%TL - binary mapping  1 or 0");
+    for(int index : access_order)                           //Get TL
+    {
+        line = vector_to_s(classes.at(index).TL, ",");
+        input.push_back(line);
+    }   line.clear();
+
+    input.push_back("%LP preferences\n");                   //Get LP
+    for(Lecturer lecturer : lecturers)
+    {
+        line = vector_to_s(lecturer.LP, ",");
+        input.push_back(line);
+    }   line.clear();
+    return input;
+
+}
+
 /* Strip members into a file */
-string InputPermute::write_to_file(int file_number, vector<int> access_order)
+const char * InputPermute::write_to_file(int file_number, vector<int> access_order)
 {
     ofstream ofs; string file_name = file_name_prefix + to_string(file_number) + ".txt";
     ofs.open(file_name, ofstream::out | ofstream::trunc);
@@ -224,9 +302,9 @@ string InputPermute::write_to_file(int file_number, vector<int> access_order)
         ofs << vector_to_s(lecturer.LP, ",") << endl;
 
     ofs.close();
-    return file_name;
+    return file_name.c_str();
 }
-string InputPermute::write_to_file(int file_number)
+const char * InputPermute::write_to_file(int file_number)
 {
     ofstream ofs; string file_name = file_name_prefix + to_string(file_number) + ".txt";
     ofs.open(file_name, ofstream::out | ofstream::trunc);
@@ -258,5 +336,5 @@ string InputPermute::write_to_file(int file_number)
         ofs << vector_to_s(lecturer.LP, ",") << endl;
 
     ofs.close();
-    return file_name;
+    return file_name.c_str();
 }
