@@ -19,6 +19,9 @@ public:
     std::vector<Course> courses;
     // std::map<std::string, int> teacher_id;
 
+    std::vector<Teacher> all_teachers;
+    Teacher get_teacher_by_id(int id);
+
     void set_raw_input(char const *);
     std::string pop_input();
     std::string pop_input(std::string);

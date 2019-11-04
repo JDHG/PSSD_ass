@@ -199,13 +199,56 @@ vector<int> Assigner::get_remaining_hours(vector<vector<int> > time_table, vecto
     return incomplete_courses;
 }
 
-vector<vector<int> > Assigner::improve(vector<vector<int> > time_table, InputSort input, vector<int> incomplete_courses)
+vector<vector<int> > Assigner::improve(vector<vector<int> > time_table, InputSort input, vector<int> ic)
 {
-    //find assigned single hours
+    //ic = vector of incomplete course indexes
+    for(int i = 0; i < ic.size(); i++)
+    {
+        for(int j = 0; j < time_table.at(ic.at(i)).size(); j++)
+        {
+            int teacher_id = time_table.at(ic.at(i)).at(j);
 
-    //check constraints (room, >2 hours, double book)
+            //find assigned single hours
+            if(teacher_id > -1)
+            {
+                int day_start = (j / 8) * 8;
+                int day_end = day_start + 8;
 
-    //if available, assign double hour sesh
+                if(j+1 < day_end)
+                {
+                    if(input.get_teacher_by_id(teacher_id).preferences.at(j+1) > 0)
+                    {
+                        if(room_available(input.n_rooms, j+1, teacher_id, time_table))
+                        {
+                            if(two_hour_max(j+1, teacher_id, time_table, 8))
+                            {
+                                time_table.at(ic.at(i)).at(j+1) = teacher_id;
+                                if(db || input.debug) cout << "    add " << teacher_id << " @ course[hour] " << input.courses.at(ic.at(i)).name << '['<<j+1<<']' << endl;
+                                return time_table;
+                            }
+                        }
+                    }
+                }
+                if(j-1 > day_start)
+                {
+                    if(input.get_teacher_by_id(teacher_id).preferences.at(j-1) > 0)
+                    {
+                        if(room_available(input.n_rooms, j-1, teacher_id, time_table))
+                        {
+                            if(two_hour_max(j-1, teacher_id, time_table, 8))
+                            {
+                                time_table.at(ic.at(i)).at(j-1) = teacher_id;
+                                if(db || input.debug) cout << "    add " << teacher_id << " @ course[hour] " << input.courses.at(ic.at(i)).name << '['<<j-1<<']' << endl;
+                                return time_table;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return time_table;
 }
 
 
