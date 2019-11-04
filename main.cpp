@@ -15,6 +15,10 @@ using namespace std;
 
 //Arguments to main are <debug> <file_name>
 
+/* CODE TO GENERATE INPUTS */
+// InputPermute ip = InputPermute(argv[2]);
+// deque<InputSort> inputs = ip.permute(4, 'a');
+
 int main(int argc, char const * argv[]) {
 
     const unsigned short HOURS_PER_DAY = 8;

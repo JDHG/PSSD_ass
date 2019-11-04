@@ -1,3 +1,6 @@
+#ifndef INPUTSORTCPP
+#define INPUTSORTCPP
+
 #include "InputSort.h"
 
 using namespace std;
@@ -25,9 +28,11 @@ void InputSort::set_raw_input(char const * file_name)
                 input_line.pop_back();
             input_lines->push_back(input_line);
         }
+
         fclose(stdin);
 
         raw_input = *input_lines;
+        delete input_lines;
         return;
     }
 
@@ -41,7 +46,7 @@ void InputSort::clean_line(string * line, string front)
 {
     //erase front off of line
     if(line->substr(0, front.size()) == front) line->erase(0, front.size());
-    else { cout << "clean_line :: Called with incorrect front" << endl; return;}
+    else { cout << "clean_line :: Called with incorrect front :: " << front << endl; return;}
 
     //clean whitespace either end
     while(line->front() == ' ') line->erase(0, 1);
@@ -101,6 +106,8 @@ vector<string> InputSort::sto_vector(string s, string separator)
     vector<string> strings = {};
     string digit = "";
 
+    cout << s << endl;
+
     while(s.front() != '*')
     {
         while((s.front() >= 'a' && s.front() <= 'z') || (s.front() >= 'A' && s.front() <= 'Z'))
@@ -113,6 +120,85 @@ vector<string> InputSort::sto_vector(string s, string separator)
         for(int i = 0; i < separator.size(); i++) s.erase(0, 1);
     }
     return strings;
+}
+
+InputSort::InputSort(bool b, deque<string> input)
+{
+    debug = b;
+    raw_input = input;
+    if(debug) cout << "\n\nPrinting raw_input :\n" << endl;
+    if(debug) for(auto line : raw_input)
+        cout << "    [" << line << "]" << endl;
+    //Get n_rooms | n_courses
+    n_rooms = stoi(pop_input("Rooms"));
+    n_courses = stoi(pop_input("Courses"));
+
+    //Get hours and names for courses
+    string line = pop_input("Hours");
+    vector<int> * course_hours = new vector<int>;
+    *course_hours = stoi_vector(line, ", ");
+    vector<string> * course_names = new vector<string>;
+    line        = pop_input("Names");
+    *course_names = sto_vector(line, ", ");
+    cout << "HERE" << endl;
+
+    vector<string>::iterator a_name = course_names->begin();
+    vector<int>   ::iterator a_hour = course_hours->begin();
+
+    //Push names | hours into courses as Course objects
+    while(a_name < course_names->end())
+    {
+        courses.push_back(Course(*a_hour, *a_name));
+        a_name++; a_hour++;
+    }
+
+    delete course_hours;
+    delete course_names;
+    //Get n_teachers
+    n_teachers = stoi(pop_input("Lecturers"));
+
+    //Get teacher names
+    line = pop_input();
+    vector<string> * teacher_names = new vector<string>;
+    *teacher_names = sto_vector(line, ", ");
+
+    //Pop %TL - binary mapping
+    pop_input();
+
+    //Get teacher_lecturer matrix (TL)
+    vector<vector<int>> * teacher_lecturer_matrix = new vector<vector<int>>;
+    for(int i = 0; i < n_courses; i++)
+    {
+        line = pop_input();
+        teacher_lecturer_matrix->push_back(stoi_vector(line, ","));
+    }
+
+    //Pop %LP preferences
+    pop_input();
+
+    //Get teachers
+    vector<int> preferences;
+    vector<Teacher> * teachers = new vector<Teacher>;
+    for(int i = 0; i < n_teachers; i++)
+    {
+        line = pop_input();
+        preferences = stoi_vector(line, ",");
+        //nullify_lunchbreaks
+        for(int j = 3; j < preferences.size(); j+=8)
+            preferences.at(j) = -1;
+        teachers->push_back(Teacher(preferences, teacher_names->at(i), i));
+    }
+
+    for(int course_i = 0; course_i < n_courses; course_i++)
+        for(int teacher_i = 0; teacher_i < n_teachers; teacher_i++)
+        {
+            if(teacher_lecturer_matrix->at(course_i).at(teacher_i) == 1) /*HIT*/
+                courses.at(course_i).teachers.push_back(teachers->at(teacher_i));
+        }
+
+    delete teachers;
+    delete teacher_names;
+    delete teacher_lecturer_matrix;
 }
 
 InputSort::InputSort(bool b, char const * file_name)
@@ -195,3 +281,5 @@ InputSort::InputSort(bool b, char const * file_name)
     delete teacher_names;
     delete teacher_lecturer_matrix;
 }
+
+#endif
