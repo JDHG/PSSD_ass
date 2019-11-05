@@ -212,7 +212,7 @@ deque<InputSort> InputPermute::permute(unsigned int n_permutations, bool debug)
         for(int j = 0; j < n_permutations; j++)
         {
             inputs.push_back(write_to_string_vector(vector_starting_from(access_order, i)));
-            next_permutation(access_order.begin(), access_order.end());
+            if(!next_permutation(access_order.begin(), access_order.end())) break;
         }
 
     for(deque<string> input : inputs)
