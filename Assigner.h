@@ -12,6 +12,7 @@ class Assigner
 
     std::vector<int> hours_assigned; //stores assigned hours of each copy of input.courses hours
 
+
     //create return vector-vector of -1's
     std::vector<vector<int> > initialise_empty_timetable(int n_courses, int n_days, int n_hours);
 
@@ -51,9 +52,29 @@ public:
 
     //TIMETABLE CREATION ALGORITHM
     std::vector<vector<int> > create_timetable(InputSort input, int hours_per_day, int version);
+    // std::vector<vector<int> > create_timetable(InputSort input, int hours_per_day, int version);
 
     //print vectors in output format
     void print_vec(std::vector<int> v);
     void print_twin_vec(std::vector<vector<int> > v);
+
+    //Set and member to record the order of generated timetable. Allows eval to
+    //work off of the orignal input file and align with generated time_tables
+    std::vector<std::string> original_order;
+    void set_original_order(InputSort original_input);
+    void print_twin_vec_debug(std::vector<vector<int> > v, std::vector<std::string> courses, int hours_per_day);
 };
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+

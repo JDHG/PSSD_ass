@@ -57,7 +57,7 @@ public:
 
     //functions that drives input permutation
     // std::vector<const char *> permute(unsigned int /* more permutation options */);
-    std::deque<InputSort> permute(unsigned int);
+    std::deque<InputSort> permute(unsigned int, bool);
     const char * write_to_file(int);
     const char * write_to_file(int, std::vector<int>);
     std::deque<std::string> write_to_string_vector(std::vector<int>);

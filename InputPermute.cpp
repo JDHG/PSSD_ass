@@ -200,7 +200,7 @@ vector<int> vector_starting_from(vector<int> input, int start)
 //     return files;
 // }
 
-deque<InputSort> InputPermute::permute(unsigned int n_permutations)
+deque<InputSort> InputPermute::permute(unsigned int n_permutations, bool debug)
 {
     deque<InputSort> input_sorts = {}; vector<int> access_order = {};
     deque<deque<string>> inputs = {};
@@ -216,7 +216,7 @@ deque<InputSort> InputPermute::permute(unsigned int n_permutations)
         }
 
     for(deque<string> input : inputs)
-        input_sorts.push_back(InputSort(true, input));
+        input_sorts.push_back(InputSort(debug, input));
 
     if(debug)
         for(InputSort input_sort : input_sorts)
