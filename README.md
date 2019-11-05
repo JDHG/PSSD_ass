@@ -172,3 +172,18 @@ Next we will try to find another case in which extra hours can be reliably assig
  - when an alternative lecturer for a course can be used to assign a 2 hour session for some 1 hour session (some of the permutations may find some of these)
  
 ///////////////////////////////////////////////////////////
+
+**5/11/19 -> Tommy G
+
+Building from my last thoughts about adapting the code to work on internal data rather than generate files to later read:
+ - I adapted InputSort to accept a list of strings as an input rather than a file,
+ - which allowed multiple InputSort objects to be generated from the intial input file,
+ - which meant that the Assigner code and eval code could be left untouched,
+ - except for reassembling the time_table generated from each input object in the original order of the courses.
+ - Additionally, the work done to permute the original inputs into readable files was canibalised;
+ - It generates the lists of strings that InputSort objects were converted to take as inputs.
+
+Essentially, overall code changes were about as minimal as possible and considering the timeframe we are currently operating on this was the only feasible option.
+That being said I am uneasy with the current state of the code. The original ideas and resulting classes, structures and functions that were generated are all stretched to the limit of their original intentions. Everything that I have worked on is strung together by the tiniest threads and feels unstable. If time was on my side I would take big step back and produce new code from the old with the main goal of taking the core parts that work and building more robust objects with less interoperability.
+
+Still I am really relieved to have gotten some form of permutation working as I have spent an entire week on it at least. It would be particularly soul crushing if I did not achieve the amount that I have so far.
