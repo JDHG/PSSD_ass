@@ -41,7 +41,6 @@ int main(int argc, char const * argv[]) {
     if(debug) cout << "Debug is TRUE (" << debug << ")" << endl;
 
     // //create set of input permutations
-    // InputSort input = InputSort(file_name, debug);
     // if(debug) input.print();
 
     //create a string of the input permutation to give to Eval
@@ -57,7 +56,7 @@ int main(int argc, char const * argv[]) {
     int n_permutations = 10;
     pair<vector<vector<int>>, double> TT_eval_pair;
     InputPermute ip = InputPermute(file_name, print_permutations);              //Generates input permuting class
-    deque<InputSort> starting_inputs = ip.permute(n_permutations, debug);      //Strips input permuting class into InputSort classes
+    deque<InputSort> starting_inputs = ip.permute(n_permutations, debug); InputSort input = starting_inputs.front();   //Strips input permuting class into InputSort classes
     if(debug) cout << "\nGENERATED " << starting_inputs.size() << " INPUTS" << endl << endl;
     assigner.set_original_order(starting_inputs.front());            //Roughly n_permutations amount of inputs are generated
 

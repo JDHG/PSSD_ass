@@ -185,7 +185,7 @@ InputSort::InputSort(bool b, deque<string> input)
             preferences.at(j) = -1;
         teachers->push_back(Teacher(preferences, teacher_names->at(i), i));
     }
-  
+
    //store all teacher objects
     all_teachers = *teachers;
 
@@ -298,3 +298,4 @@ Teacher InputSort::get_teacher_by_id(int id)
     exit(1);
 }
 
+#endif
