@@ -249,6 +249,7 @@ public:
 
     stringstream sr;
     sr.str(fileName);
+
     int courses = ProblemUCS::mC;
 
     //first, resize Timetable to be  mC x 40
@@ -274,7 +275,6 @@ public:
          if (j != 40)
              if(enable_readout) cout << j << endl;
 
-             // cout << "HERE" << endl;
      }
 
     if(enable_readout) cout << "timetable"  << endl;
@@ -290,7 +290,7 @@ public:
       return false;
        }
 
-    if(enable_readout) cout << "read returns true" << endl;
+    if(enable_readout) cout << "read retruns true" << endl;
     return true;
 
     }
@@ -487,7 +487,7 @@ public:
         int totalhours = accumulate(coursehours.begin(), coursehours.end(), 0);
 
         if(totalAllocateHours!=totalhours){
-            if(enable_readout)printf("You didn't allocate all the hours or allocate more than the hours\n");
+            printf("You didn't allocate all the hours or allocate more than the hours\n");
             //We penalize for any discrepancy
             penalization = 15*(double)abs(totalAllocateHours-totalhours);
             sum = sum+ penalization;

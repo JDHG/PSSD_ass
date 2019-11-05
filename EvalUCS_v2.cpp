@@ -19,7 +19,7 @@ double Eval(string input_file, string time_table, bool new_input, bool debug) {
   string ucsFileName = input_file;
   string ucsSolnFileName = time_table;
 
-  if(new_input) ProblemUCS::readUCSInstance(ucsFileName);
+  if(new_input) ProblemUCS::readUCSInstance(ucsFileName);;
   double res ;   // place holder for result
 
     if(debug) cout << "calling readSolution " << endl;
@@ -31,9 +31,9 @@ double Eval(string input_file, string time_table, bool new_input, bool debug) {
     if(debug) cout << "calling constrains " << endl;
     int constrains = Solution::checkConstraints(Solution::Timetable, ProblemUCS::rooms, ProblemUCS::cHours, ProblemUCS::LP, ProblemUCS::cNames, ProblemUCS::lNames);
     if (constrains == 0)
-         if(debug) cout << "your solution is feasible" << endl;
+         cout << "your solution is feasible" << endl;
      else
-         if(debug) cout << "your solution is not feasible" << endl;
+         cout << "your solution is not feasible" << endl;
 
       res =  Solution::getFitnessValue(Solution::Timetable, ProblemUCS::mC,ProblemUCS::LP,ProblemUCS::cHours,constrains);
       if(debug) cout << "Fitness value " <<  res << endl;

@@ -291,20 +291,11 @@ vector<vector<int> > Assigner::create_timetable(InputSort input, int hours_per_d
     basic_assign(input, input.courses, &time_table, input.n_rooms, {1}, hours_per_day, 0, version);
 
     //display results if debug enabled
-    // if(input.debug) print_twin_vec_debug(time_table, input.courses, hours_per_day);
+    if(input.debug) print_twin_vec_debug(time_table, input.courses, hours_per_day);
+
     not_complete = false; //ends program in main
 
-    vector<vector<int>> time_table_reordered = {};
-
-    //Reorder time_table to match input course order
-    for(int i = 0; i < input.n_courses; i++)
-        for(int j = 0; j < input.n_courses; j++)
-            if(input.courses.at(j).name == original_order.at(i))
-            {
-                time_table_reordered.push_back(time_table.at(j)); break;
-            }
-    if(input.debug) print_twin_vec_debug(time_table_reordered, original_order, hours_per_day);
-    return time_table_reordered;
+    return time_table;
 }
 
 //output printer formatting
@@ -319,20 +310,4 @@ void Assigner::print_twin_vec(vector<vector<int> > v)
     if(db) cout << "Assigner :: print_twin_vec" << endl;
     for(int i = 0; i < v.size(); i++)
         print_vec(v.at(i));
-}
-void Assigner::set_original_order(InputSort original_input)
-{
-    for(Course c : original_input.courses)
-        original_order.push_back(c.name);
-    return;
-}
-void Assigner::print_twin_vec_debug(vector<vector<int> > v, vector<string> courses, int hours_per_day)
-{
-    if(db) cout << "Assigner :: print_twin_vec_debug (string not Course)" << endl;
-    for(int i = 0; i < v.size(); i++)
-    {
-        cout << courses.at(i) << "\t: ";
-        print_time_table_debug(v.at(i), '~', hours_per_day);
-    }
-    cout << endl;
 }

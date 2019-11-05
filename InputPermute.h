@@ -11,7 +11,6 @@
 
 class InputPermute
 {
-    bool debug;
 public:
     struct Class
     {
@@ -35,7 +34,10 @@ public:
     };
 
     //Cror
-    InputPermute(const char *, bool);
+    InputPermute(const char * file_name) // Constructor for string production
+    {
+        set_input(file_name); file_name_prefix = "NOT FOR FILE CREATION";
+    }
     InputPermute(std::string, const char *);    /*  <prefix string> <input file_name> */
     void set_raw_input(char const * file_name); /*Rip file into a string */
     void set_input(const char *);               /*Rip string into class members */
@@ -56,8 +58,8 @@ public:
     std::vector<Lecturer> lecturers;
 
     //functions that drives input permutation
-    // std::vector<const char *> permute(unsigned int /* more permutation options */);
-    std::deque<InputSort> permute(unsigned int, bool);
+    std::vector<const char *> permute(unsigned int /* more permutation options */);
+    std::deque<InputSort> permute(unsigned int, char);
     const char * write_to_file(int);
     const char * write_to_file(int, std::vector<int>);
     std::deque<std::string> write_to_string_vector(std::vector<int>);
