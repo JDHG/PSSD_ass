@@ -106,8 +106,6 @@ vector<string> InputSort::sto_vector(string s, string separator)
     vector<string> strings = {};
     string digit = "";
 
-    cout << s << endl;
-
     while(s.front() != '*')
     {
         while((s.front() >= 'a' && s.front() <= 'z') || (s.front() >= 'A' && s.front() <= 'Z'))
@@ -126,9 +124,9 @@ InputSort::InputSort(bool b, deque<string> input)
 {
     debug = b;
     raw_input = input;
-    if(debug) cout << "\n\nPrinting raw_input :\n" << endl;
-    if(debug) for(auto line : raw_input)
-        cout << "    [" << line << "]" << endl;
+    // if(debug) cout << "\n\nPrinting raw_input :\n" << endl;
+    // if(debug) for(auto line : raw_input)
+    //     cout << "    [" << line << "]" << endl;
     //Get n_rooms | n_courses
     n_rooms = stoi(pop_input("Rooms"));
     n_courses = stoi(pop_input("Courses"));
@@ -140,7 +138,6 @@ InputSort::InputSort(bool b, deque<string> input)
     vector<string> * course_names = new vector<string>;
     line        = pop_input("Names");
     *course_names = sto_vector(line, ", ");
-    cout << "HERE" << endl;
 
     vector<string>::iterator a_name = course_names->begin();
     vector<int>   ::iterator a_hour = course_hours->begin();
