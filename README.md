@@ -187,3 +187,9 @@ Essentially, overall code changes were about as minimal as possible and consider
 That being said I am uneasy with the current state of the code. The original ideas and resulting classes, structures and functions that were generated are all stretched to the limit of their original intentions. Everything that I have worked on is strung together by the tiniest threads and feels unstable. If time was on my side I would take big step back and produce new code from the old with the main goal of taking the core parts that work and building more robust objects with less interoperability.
 
 Still I am really relieved to have gotten some form of permutation working as I have spent an entire week on it at least. It would be particularly soul crushing if I did not achieve the amount that I have so far.
+
+///////////////////////////////////////////////////////////
+
+**5/11/19 -> Tommy G
+
+Changed the eval code ~line 300 to 'int courses = ProblemUCS::mC;' as otherwise for small inputs you get seg faults.
