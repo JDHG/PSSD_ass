@@ -185,6 +185,9 @@ InputSort::InputSort(bool b, deque<string> input)
             preferences.at(j) = -1;
         teachers->push_back(Teacher(preferences, teacher_names->at(i), i));
     }
+  
+   //store all teacher objects
+    all_teachers = *teachers;
 
     for(int course_i = 0; course_i < n_courses; course_i++)
         for(int teacher_i = 0; teacher_i < n_teachers; teacher_i++)
@@ -267,6 +270,9 @@ InputSort::InputSort(bool b, char const * file_name)
         teachers->push_back(Teacher(preferences, teacher_names->at(i), i));
     }
 
+    //store all teacher objects
+    all_teachers = *teachers;
+
     for(int course_i = 0; course_i < n_courses; course_i++)
         for(int teacher_i = 0; teacher_i < n_teachers; teacher_i++)
         {
@@ -279,4 +285,16 @@ InputSort::InputSort(bool b, char const * file_name)
     delete teacher_lecturer_matrix;
 }
 
-#endif
+
+Teacher InputSort::get_teacher_by_id(int id)
+{
+    // cout << "InputSort :: get_teacher_by_id (" << id << ")" << endl;
+    if(all_teachers.empty()) exit(1);
+
+    for(Teacher t : all_teachers)
+        if(t.id == id) return t;
+
+    cout << "Teacher " << id << " not found. exiting..." << endl;
+    exit(1);
+}
+

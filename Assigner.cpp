@@ -61,7 +61,7 @@ bool Assigner::room_available(int n_rooms, int current_hour, int incoming_teache
     return true;
 }
 
-bool Assigner::day_available(int hours_per_day, std::vector<int> tt_slot, int current_hour)
+bool Assigner::day_available(int hours_per_day, std::vector<int> tt_slot, int current_hour, int version)
 {
     if(db) cout << "Assigner :: day_available" << endl;
     //get hour boundaries of day containing 'current_hour'
@@ -71,8 +71,11 @@ bool Assigner::day_available(int hours_per_day, std::vector<int> tt_slot, int cu
     for(int i = day_start; i < day_end; i++)
         if(tt_slot.at(i) >= 0)
         {
-            if(i < day_end-1)
+            if(version < 1 && i < day_end-1)
                 if(tt_slot.at(++i) < 0 && i == current_hour) return true; //allow 2-hour session assignment
+
+            if(version == 1 && i > day_start+1)
+                if(tt_slot.at(--i) < 0 && i == current_hour) return true; //allow 2-hour session assignment
 
             return false; //day has a session allocated already
         }
@@ -136,7 +139,7 @@ void Assigner::basic_assign(InputSort input, vector<Course> courses, vector<vect
                 if(db) cout << "hour:" << k << ' ';
                 if(k >= 0)
                 {
-                    if(c->hours > 0 && day_available(hours_per_day, time_table->at(i), k))
+                    if(c->hours > 0 && day_available(hours_per_day, time_table->at(i), k, version))
                     {
                         vector<int> p = t.preferences;
                         if  (    permitted(p.at(k), permitted_LP_values)
@@ -168,6 +171,87 @@ void Assigner::basic_assign(InputSort input, vector<Course> courses, vector<vect
         cout << "* * * INCOMPLETE SOLUTION -> some course hours were not assigned * * *" << endl;
 }
 
+bool Assigner::is_complete(std::vector<vector<int> > time_table, std::vector<Course> courses, bool input_debug)
+{
+    if(db) cout << "Assigner :: is_complete" << endl;
+    bool complete = true;
+    for(Course c : courses)
+    {
+        if(db || input_debug) cout << c.name << "\t: hours left = " << c.hours << endl;
+        if(c.hours > 0) complete = false;
+    }
+    if(db || input_debug) cout << endl;
+    return complete;
+}
+
+vector<int> Assigner::get_remaining_hours(vector<vector<int> > time_table, vector<Course> courses)
+{
+    vector<int> incomplete_courses;
+    for(int i = 0; i < time_table.size(); i++)
+    {
+        int hours = courses.at(i).hours;
+        for(int j = 0; j < time_table.at(i).size(); j++)
+        {
+            if(time_table.at(i).at(j) >= 0) hours--;
+        }
+        if(hours > 0) incomplete_courses.push_back(i);
+    }
+    return incomplete_courses;
+}
+
+vector<vector<int> > Assigner::improve(vector<vector<int> > time_table, InputSort input, vector<int> ic)
+{
+    //ic = vector of incomplete course indexes
+    for(int i = 0; i < ic.size(); i++)
+    {
+        for(int j = 0; j < time_table.at(ic.at(i)).size(); j++)
+        {
+            int teacher_id = time_table.at(ic.at(i)).at(j);
+
+            //find assigned single hours
+            if(teacher_id > -1)
+            {
+                int day_start = (j / 8) * 8;
+                int day_end = day_start + 8;
+
+                if(j+1 < day_end)
+                {
+                    if(input.get_teacher_by_id(teacher_id).preferences.at(j+1) > 0)
+                    {
+                        if(room_available(input.n_rooms, j+1, teacher_id, time_table))
+                        {
+                            if(two_hour_max(j+1, teacher_id, time_table, 8))
+                            {
+                                time_table.at(ic.at(i)).at(j+1) = teacher_id;
+                                if(db || input.debug) cout << "    add " << teacher_id << " @ course[hour] " << input.courses.at(ic.at(i)).name << '['<<j+1<<']' << endl;
+                                return time_table;
+                            }
+                        }
+                    }
+                }
+                if(j-1 > day_start)
+                {
+                    if(input.get_teacher_by_id(teacher_id).preferences.at(j-1) > 0)
+                    {
+                        if(room_available(input.n_rooms, j-1, teacher_id, time_table))
+                        {
+                            if(two_hour_max(j-1, teacher_id, time_table, 8))
+                            {
+                                time_table.at(ic.at(i)).at(j-1) = teacher_id;
+                                if(db || input.debug) cout << "    add " << teacher_id << " @ course[hour] " << input.courses.at(ic.at(i)).name << '['<<j-1<<']' << endl;
+                                return time_table;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return time_table;
+}
+
+
 //debug printer formatting
 void Assigner::print_time_table_debug(vector<int> v, char neg_replace, int hours_per_day)
 {
@@ -195,18 +279,6 @@ void Assigner::print_twin_vec_debug(vector<vector<int> > v, vector<Course> cours
 void Assigner::fatal(string error_message)
 { cout << "Assigner :: fatal() -> " << error_message << endl; exit(1); }
 
-bool Assigner::is_complete(std::vector<vector<int> > time_table, std::vector<Course> courses, bool input_debug)
-{
-    if(db) cout << "Assigner :: is_complete" << endl;
-    bool complete = true;
-    for(Course c : courses)
-    {
-        if(db || input_debug) cout << c.name << "\t: hours left = " << c.hours << endl;
-        if(c.hours > 0) complete = false;
-    }
-    if(db || input_debug) cout << endl;
-    return complete;
-}
 
 //********************************************************************************************************************//
 

@@ -160,3 +160,15 @@ We have started looking at how we can iteratively improve our timetables. We hav
 Given that allocating more hours is more desireable, we will focus on this first. We will need to establish some sort of heuristic, or some identifiable pattern that allows us to manipulate the time table and introduce a new hour. We can start doing this by just inspecting our outputs and messing with them on paper. If we can produce an algorithm that moves hours and assigns new ones, we will have made a big improvement to our program.
 
 ///////////////////////////////////////////////////////////
+
+**4/11/19 -> Jason
+
+Our first hour improver is simple. It looks through the timetable row of the courses with outstanding hours and finds single hour assignments. It then checks the surrounding assignments, room constraints, hour constraints, etc. If it passes all tests, it will assign the same lecturer an extra hour, turning it from a 1 hour session into a two hour. This has gained us fitness increases of .5 in some cases, which is pretty good!
+
+Tom is still working on the input permuter. It is looking like we may still be able to use it, which is really cool because that will give us a lot more to work with; It has a good chance of finding good results.
+
+Next we will try to find another case in which extra hours can be reliably assigned. I think this will really be our main focus, since changes like upgrading an LP2 assignment to an LP1 only yields minor fitness gains. Other cases where it is likely we can manipulate the table to assign hours will be things like:
+ - when a course has no assignments for a given day
+ - when an alternative lecturer for a course can be used to assign a 2 hour session for some 1 hour session (some of the permutations may find some of these)
+ 
+///////////////////////////////////////////////////////////

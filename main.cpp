@@ -84,15 +84,34 @@ int main(int argc, char const * argv[]) {
         starting_inputs.pop_front();
         cout << "Inputs remaining :: " << starting_inputs.size() << endl;
     }
-    cout << "---------------------------------------------------------------------------------------\n";
-    cout << "number of timetables created = " << n_timetables_created << endl;
-    cout << "fitness of final time_table  = " << current_eval_score << " -> Eval(" << Eval(file_name, twinvec_to_string(best_TT), true, debug) << ")" << endl;
+
+    if(debug) cout << "---------------------------------------------------------------------------------------\n";
+    if(debug) cout << "number of timetables created = " << n_timetables_created << endl;
+    if(debug) cout << "fitness of final time_table  = " << current_eval_score << " -> Eval(" << Eval(file_name, twinvec_to_string(best_TT), true, debug) << ")" << endl;
+    if(debug) assigner.print_twin_vec(best_TT); //output generation
+
+
+
+    if(current_eval_score > 1)
+    {
+        if(debug) cout << "*** ATTEMPT IMPROVEMENT ***" << endl;
+        //get unfinished course indexes
+        vector<int> UF = assigner.get_remaining_hours(best_TT, input.courses);
+
+        bool improving = true;
+        while(improving)
+        {
+            vector<vector<int> > current_TT = best_TT;
+            best_TT = assigner.improve(best_TT, input, UF);
+            if(current_TT == best_TT) improving = false;
+        }
+
+        string time_table_csv = twinvec_to_string(best_TT);
+        double eval_score = Eval(file_name, time_table_csv, new_file, debug);
+    }
+
+
     assigner.print_twin_vec(best_TT); //output generation
-
-
-    //second while loop to optimise best_TT specifically
-
-
 
     return 0;
 }
