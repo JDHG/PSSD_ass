@@ -19,8 +19,6 @@ using namespace std;
 
 
 
-
-
 //Arguments to main are <debug> <file_name>
 
 //      Hello! Welcome to our timetabler!
@@ -31,11 +29,6 @@ using namespace std;
 //          -   e.g. './scheduler false input.txt'  ::  is valid
 //          -        './scheduler input.txt'        ::  is invalid -> requires the debug to be specified
 //      You almost assuredly want to run the program with debug set to 'false'
-
-
-
-
-
 
 
 
