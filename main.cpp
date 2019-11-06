@@ -13,6 +13,7 @@ pair<vector<vector<int>>, double> generate_time_score_pair(InputSort input, int 
 bool update_best(vector<vector<int>> * best_TT, double * current_eval_score, pair<vector<vector<int>>, double> TT_eval_pair);
 void check_csv(string);
 string twinvec_to_string(vector<vector<int> > tv);
+char get_spinner(int spin_counter);
 
 using namespace std;
 
@@ -23,6 +24,7 @@ int main(int argc, char const * argv[]) {
     const unsigned short HOURS_PER_DAY = 8;
     const int MAX_TIMETABLES = 10000;
     int n_permutations = 10000;
+    int spin_speed = 35;
 
     if(argc < 3) { cout << "FATAL -> not enough arguments on main call (" << argc << "arguments)" << endl; exit(1); }
     if(argc > 3) { cout <<   "FATAL -> too many arguments on main call (" << argc << "arguments)" << endl; exit(1); }
@@ -48,29 +50,35 @@ int main(int argc, char const * argv[]) {
     if(debug) cout << "\nGENERATED " << starting_inputs.size() << " INPUTS" << endl << endl;
     assigner.set_original_order(starting_inputs.front());            //Roughly n_permutations amount of inputs are generated
 
+    int spin_counter = 0;
+
     //PROGRAM LOOP - attempt to create best starting timetable
     while(current_eval_score > 1 && !starting_inputs.empty() && n_timetables_created <= MAX_TIMETABLES)
     {
-        if(n_timetables_created % 100 == 0) cout << n_timetables_created << endl;
+        if(n_timetables_created % spin_speed == 0)
+        {
+            spin_counter++; spin_counter %= 4; char c = get_spinner(spin_counter);
+            string status = "timetable (" + to_string(n_timetables_created) + ") " + c;
+            for(int i = 0; i < status.size(); i++) { printf("\b"); fflush(stdout); } cout << status;
+        }
         //Update best timetable left to right
         TT_eval_pair = generate_time_score_pair(starting_inputs.front(), 0, HOURS_PER_DAY, file_name, true, debug, assigner);
-        if(update_best(&best_TT, &current_eval_score, TT_eval_pair)) {cout << "Found new best . . ." << current_eval_score << endl; }
-
-        //Update best timetable right to left
-        // TT_eval_pair = generate_time_score_pair(starting_inputs.front(), 1, HOURS_PER_DAY, file_name, true, debug, assigner);
-        // if(update_best(&best_TT, &current_eval_score, TT_eval_pair)) {cout << "Found new best . . ." << endl; }
+        update_best(&best_TT, &current_eval_score, TT_eval_pair);
 
         n_timetables_created += 1;
         starting_inputs.pop_front();
     }
 
-    cout << "---------------------------------------------------------------------------------------\n";
+    //create completed timetable file
+    ofstream ofs;
+    ofs.open("output.txt", ofstream::out | ofstream::trunc);
+    ofs << twinvec_to_string(best_TT); //output generation
+    ofs.close();
+
     cout << "number of timetables created = " << n_timetables_created << endl;
     cout << "fitness of final time_table  = " << current_eval_score << " -> Eval(" << Eval(file_name, twinvec_to_string(best_TT), true, debug) << ")" << endl;
-
     assigner.print_twin_vec_debug(best_TT, input.courses, 8);
-
-    assigner.print_twin_vec(best_TT); //output generation
+    assigner.print_twin_vec(best_TT);
     return 0;
 }
 
@@ -120,4 +128,16 @@ bool update_best(vector<vector<int>> * best_TT, double * current_eval_score, pai
         return true;
     }
     return false;
+}
+
+char get_spinner(int spin_counter)
+{
+    switch(spin_counter)
+    {
+        case 0: return '|';
+        case 1: return '/';
+        case 2: return '-';
+        case 3: return '\\';
+        default: exit(1);
+    }
 }

@@ -258,8 +258,9 @@ void Assigner::print_time_table_debug(vector<int> v, char neg_replace, int hours
     cout << "[ ";
     for(int i = 0; i < v.size()-1; i++)
     {
-        if(i>0 && i%hours_per_day==0) cout << " | ";
-        if(v.at(i) < 0) cout << neg_replace << ", ";
+        if(i>0 && i%hours_per_day==0) cout << "| ";
+        if(i%8 == 3) cout << "L, ";
+        else if(v.at(i) < 0) cout << neg_replace << ", ";
         else cout << v.at(i) << ", ";
     }
     if(v.back() < 0) cout << neg_replace << " ]" << endl;

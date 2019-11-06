@@ -1,4 +1,4 @@
-Rooms       5
+Rooms       1
 Courses     5
 Hours       6, 6, 6, 6, 6
 Names       ADSA, EDC, PSSD, OOP, CS
