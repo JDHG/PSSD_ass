@@ -44,9 +44,6 @@ class Assigner
     //return true if all course hours have been assigned
     bool is_complete(std::vector<vector<int> > time_table, std::vector<Course> courses, bool input_debug);
 
-    //print time_table in readable debug format
-    void print_time_table_debug(std::vector<int> v, char neg_replace, int hours_per_day); //print neg_replace instead of negative integers
-    void print_twin_vec_debug(std::vector<vector<int> > v, std::vector<Course> courses, int hours_per_day);
 
     void fatal(std::string error_message);
 
@@ -63,6 +60,10 @@ public:
 
     //returns a time table that has undergone one step of iterative improvement
     std::vector<std::vector<int> > improve(std::vector<std::vector<int> > time_table, InputSort input, vector<int> incomplete_courses);
+    
+    //print time_table in readable debug format
+    void print_time_table_debug(std::vector<int> v, char neg_replace, int hours_per_day); //print neg_replace instead of negative integers
+    void print_twin_vec_debug(std::vector<vector<int> > v, std::vector<Course> courses, int hours_per_day);
 
     //print vectors in output format
     void print_vec(std::vector<int> v);
@@ -75,16 +76,3 @@ public:
     void print_twin_vec_debug(std::vector<vector<int> > v, std::vector<std::string> courses, int hours_per_day);
 };
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-

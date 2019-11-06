@@ -10,23 +10,18 @@
 #include "EvalUCS_v2.cpp"
 extern double Eval(string input_file, string time_table, bool debug);
 pair<vector<vector<int>>, double> generate_time_score_pair(InputSort input, int algorithm, int HOURS_PER_DAY, char const * file_name, bool new_file, bool debug, Assigner assigner);
-void update_best(vector<vector<int>> * best_TT, double * current_eval_score, pair<vector<vector<int>>, double> TT_eval_pair);
+bool update_best(vector<vector<int>> * best_TT, double * current_eval_score, pair<vector<vector<int>>, double> TT_eval_pair);
 void check_csv(string);
-
-
 string twinvec_to_string(vector<vector<int> > tv);
 
 using namespace std;
 
 //Arguments to main are <debug> <file_name>
 
-/* CODE TO GENERATE INPUTS */
-// InputPermute ip = InputPermute(argv[2]);
-// deque<InputSort> inputs = ip.permute(4, 'a');
-
 int main(int argc, char const * argv[]) {
 
     const unsigned short HOURS_PER_DAY = 8;
+    const int MAX_TIMETABLES = 15000;
 
     if(argc < 3) { cout << "FATAL -> not enough arguments on main call (" << argc << "arguments)" << endl; exit(1); }
     if(argc > 3) { cout <<   "FATAL -> too many arguments on main call (" << argc << "arguments)" << endl; exit(1); }
@@ -40,79 +35,43 @@ int main(int argc, char const * argv[]) {
     if(debug) cout << "Initiating timetable booking with input file :: '" << file_name << "'" << endl;
     if(debug) cout << "Debug is TRUE (" << debug << ")" << endl;
 
-    // //create set of input permutations
-    // InputSort input = InputSort(file_name, debug);
-    // if(debug) input.print();
-
-    //create a string of the input permutation to give to Eval
-
     Assigner assigner = Assigner();
-    // vector<vector<int> > TT; //stores resulting time_table
     vector<vector<int> > best_TT;
     double current_eval_score = 99999;
-    // int assigner_version_number = 0;
     unsigned long n_timetables_created = 0;
     bool new_file = true;
 
-    int n_permutations = 10;
+    int n_permutations = 5000;
     pair<vector<vector<int>>, double> TT_eval_pair;
     InputPermute ip = InputPermute(file_name, print_permutations);              //Generates input permuting class
-    deque<InputSort> starting_inputs = ip.permute(n_permutations, debug);      //Strips input permuting class into InputSort classes
+    deque<InputSort> starting_inputs = ip.permute(n_permutations, debug); InputSort input = starting_inputs.front();   //Strips input permuting class into InputSort classes
     if(debug) cout << "\nGENERATED " << starting_inputs.size() << " INPUTS" << endl << endl;
     assigner.set_original_order(starting_inputs.front());            //Roughly n_permutations amount of inputs are generated
 
-    // best_TT = assigner.create_timetable(starting_inputs.front(), HOURS_PER_DAY, 0);
-    // current_eval_score = Eval(file_name, twinvec_to_string(TT), false, debug);
-
     //PROGRAM LOOP - attempt to create best starting timetable
-    // while(current_eval_score > 1 && assigner_version_number < 2) //assigner_version_number stop is temporary -> will be stopping after all input permutations have been tried or score of 1 is reached
-    while(current_eval_score > 1 && !starting_inputs.empty())
+    while(current_eval_score > 1 && !starting_inputs.empty() && n_timetables_created <= MAX_TIMETABLES)
     {
-        // if(debug) cout << "Trying input ::" << endl;
-        // if(debug) starting_inputs.begin()->print();
-
+        if(n_timetables_created % 100 == 0) cout << n_timetables_created << endl;
         //Update best timetable left to right
         TT_eval_pair = generate_time_score_pair(starting_inputs.front(), 0, HOURS_PER_DAY, file_name, true, debug, assigner);
-        update_best(&best_TT, &current_eval_score, TT_eval_pair);
+        if(update_best(&best_TT, &current_eval_score, TT_eval_pair)) {cout << "Found new best . . ." << endl; }
 
         //Update best timetable right to left
-        TT_eval_pair = generate_time_score_pair(starting_inputs.front(), 1, HOURS_PER_DAY, file_name, true, debug, assigner);
-        update_best(&best_TT, &current_eval_score, TT_eval_pair);
+        // TT_eval_pair = generate_time_score_pair(starting_inputs.front(), 1, HOURS_PER_DAY, file_name, true, debug, assigner);
+        // if(update_best(&best_TT, &current_eval_score, TT_eval_pair)) {cout << "Found new best . . ." << endl; }
 
-        // assigner_version_number++;
-        n_timetables_created += 2;
+        n_timetables_created += 1;
         starting_inputs.pop_front();
-        cout << "Inputs remaining :: " << starting_inputs.size() << endl;
     }
 
-    if(debug) cout << "---------------------------------------------------------------------------------------\n";
-    if(debug) cout << "number of timetables created = " << n_timetables_created << endl;
-    if(debug) cout << "fitness of final time_table  = " << current_eval_score << " -> Eval(" << Eval(file_name, twinvec_to_string(best_TT), true, debug) << ")" << endl;
-    if(debug) assigner.print_twin_vec(best_TT); //output generation
+    cout << "---------------------------------------------------------------------------------------\n";
+    cout << "number of timetables created = " << n_timetables_created << endl;
+    cout << "fitness of final time_table  = " << current_eval_score << " -> Eval(" << Eval(file_name, twinvec_to_string(best_TT), true, debug) << ")" << endl;
 
-
-
-    if(current_eval_score > 1)
-    {
-        if(debug) cout << "*** ATTEMPT IMPROVEMENT ***" << endl;
-        //get unfinished course indexes
-        vector<int> UF = assigner.get_remaining_hours(best_TT, input.courses);
-
-        bool improving = true;
-        while(improving)
-        {
-            vector<vector<int> > current_TT = best_TT;
-            best_TT = assigner.improve(best_TT, input, UF);
-            if(current_TT == best_TT) improving = false;
-        }
-
-        string time_table_csv = twinvec_to_string(best_TT);
-        double eval_score = Eval(file_name, time_table_csv, new_file, debug);
-    }
-
+    assigner.print_twin_vec_debug(best_TT, input.courses, 8);
 
     assigner.print_twin_vec(best_TT); //output generation
-
+    cout << Eval(file_name, twinvec_to_string(best_TT), true, debug) << endl;
     return 0;
 }
 
@@ -133,6 +92,16 @@ pair<vector<vector<int>>, double> generate_time_score_pair(InputSort input, int 
     //create_timetable needs a variable to determine its behaviour (what algorithm it tries)
     vector<vector<int>> TT = assigner.create_timetable(input, HOURS_PER_DAY, algorithm);
 
+    vector<int> UF = assigner.get_remaining_hours(TT, input.courses);
+    //run improver on timetable
+    bool improving = true;
+    while(improving)
+    {
+        vector<vector<int> > current_TT = TT;
+        TT = assigner.improve(TT, input, UF);
+        if(current_TT == TT) improving = false;
+    }
+
     //convert TT to string so it can be read by Eval()
     string time_table_csv = twinvec_to_string(TT);
 
@@ -143,26 +112,13 @@ pair<vector<vector<int>>, double> generate_time_score_pair(InputSort input, int 
     return make_pair(TT, eval_score);
 }
 
-void update_best(vector<vector<int>> * best_TT, double * current_eval_score, pair<vector<vector<int>>, double> TT_eval_pair)
+bool update_best(vector<vector<int>> * best_TT, double * current_eval_score, pair<vector<vector<int>>, double> TT_eval_pair)
 {
     if(TT_eval_pair.second < *current_eval_score)
     {
         *best_TT = TT_eval_pair.first;
         *current_eval_score = TT_eval_pair.second;
+        return true;
     }
-    return;
+    return false;
 }
-
-// void check_csv(string csv)
-// {
-//     int count = 0;
-//     for(int i = 0; i < csv.size(); i++)
-//     {
-//         if(csv.at(i) == ',')
-//         {
-//             count++;
-//             cout << count << endl;
-//         }
-//     }
-//     return;
-// }

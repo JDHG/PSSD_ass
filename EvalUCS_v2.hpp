@@ -304,7 +304,7 @@ public:
 
 
    vector < vector <int> > copysol = solution;
-   int courses = 5;
+   int courses = ProblemUCS::mC;
    int index=0;
    int hoursWeek=40;
 
