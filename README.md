@@ -190,6 +190,19 @@ Still I am really relieved to have gotten some form of permutation working as I 
 
 ///////////////////////////////////////////////////////////
 
-**5/11/19 -> Tommy G
+**5/11/19 -> TommyG
 
-Changed the eval code ~line 300 to 'int courses = ProblemUCS::mC;' as otherwise for small inputs you get seg faults.
+Changed the eval code ~line 300 to 'int courses = ProblemUCS::mC;' as otherwise for small inputs you get seg faults. Added to the discussion forum so other people could potentially benefit from this insight.
+
+///////////////////////////////////////////////////////////
+
+**6/11/19 -> TommyG
+
+Commentary on general state of the code, thoughts and feelings on the assignment :
+
+ - Overall the problem is interesting in that it is an optimisation problem that relates to a real world scenarios. My brother is a teacher and even expressed interest in having a copy of my code for helping timetable in his school.
+ - Teacher handling of the resources applied stress to our time management. The extra week given was nice, however, it also puts stress on exam revision. It felt like an exercise in faith to plough on with our side of the code (writing input collection, permutation, optimisation) without knowing precisely how timetables would be evaluated, which was not fun.
+ - It's interesting that once we got hold of the eval program we weren't out of the woods; the initial code given didn't compile and once it was compiling it was not instantly intergratable. We had some fun converting it to run on string streams instead, allowing it to evaluate data internally rather than external process text files.
+ - Super satisfied with where we ended up finishing. We coded ourselves down many wrong paths but managed to either backtrack (re-code sections) or find a way to jump onto a better path (cannibalise/re-jig IO to allow communication between different classes and functions).
+ - Further on coding ourselves down wrong paths (C.S. Lewis "We all want progress, but if you're on the wrong road, progress means doing an about-turn and walking back to the right road; in that case, the man who turns back soonest is the most progressive"). We had the option about halfway through to take a step back and re-assess the data structures we were using. We opted to continue as we were because of time restrictions. However, we possibly would have saved time overall by adapting the input sorting and input permuting classes into one class. As is often the case, attempting something for the first time leaves you at the mercy of learning through mistake-making. If I were to write a scheduler for my brother for example, I would use this code as a reference and attempt to avoid the tight coupling that occured.
+ 
