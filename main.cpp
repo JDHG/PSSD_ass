@@ -21,6 +21,7 @@ using namespace std;
 int main(int argc, char const * argv[]) {
 
     const unsigned short HOURS_PER_DAY = 8;
+    const int MAX_TIMETABLES = 15000;
 
     if(argc < 3) { cout << "FATAL -> not enough arguments on main call (" << argc << "arguments)" << endl; exit(1); }
     if(argc > 3) { cout <<   "FATAL -> too many arguments on main call (" << argc << "arguments)" << endl; exit(1); }
@@ -33,8 +34,6 @@ int main(int argc, char const * argv[]) {
 
     if(debug) cout << "Initiating timetable booking with input file :: '" << file_name << "'" << endl;
     if(debug) cout << "Debug is TRUE (" << debug << ")" << endl;
-
-    //create a string of the input permutation to give to Eval
 
     Assigner assigner = Assigner();
     vector<vector<int> > best_TT;
@@ -50,45 +49,18 @@ int main(int argc, char const * argv[]) {
     assigner.set_original_order(starting_inputs.front());            //Roughly n_permutations amount of inputs are generated
 
     //PROGRAM LOOP - attempt to create best starting timetable
-    while(current_eval_score > 1 && !starting_inputs.empty())
+    while(current_eval_score > 1 && !starting_inputs.empty() && n_timetables_created <= MAX_TIMETABLES)
     {
+        if(n_timetables_created % 100 == 0) cout << n_timetables_created << endl;
         //Update best timetable left to right
         TT_eval_pair = generate_time_score_pair(starting_inputs.front(), 0, HOURS_PER_DAY, file_name, true, debug, assigner);
-        if(TT_eval_pair.second > 1)
-        {
-            if(debug) cout << "*** ATTEMPT IMPROVEMENT ***" << endl;
-            //get unfinished course indexes
-            vector<int> UF = assigner.get_remaining_hours(TT_eval_pair.first, input.courses);
-
-            bool improving = true;
-            while(improving)
-            {
-                vector<vector<int> > current_TT = TT_eval_pair.first;
-                TT_eval_pair.first = assigner.improve(TT_eval_pair.first, input, UF);
-                if(current_TT == TT_eval_pair.first) improving = false;
-            }
-        }
         if(update_best(&best_TT, &current_eval_score, TT_eval_pair)) {cout << "Found new best . . ." << endl; }
 
         //Update best timetable right to left
-        TT_eval_pair = generate_time_score_pair(starting_inputs.front(), 1, HOURS_PER_DAY, file_name, true, debug, assigner);
-        if(TT_eval_pair.second > 1)
-        {
-            if(debug) cout << "*** ATTEMPT IMPROVEMENT ***" << endl;
-            //get unfinished course indexes
-            vector<int> UF = assigner.get_remaining_hours(TT_eval_pair.first, input.courses);
+        // TT_eval_pair = generate_time_score_pair(starting_inputs.front(), 1, HOURS_PER_DAY, file_name, true, debug, assigner);
+        // if(update_best(&best_TT, &current_eval_score, TT_eval_pair)) {cout << "Found new best . . ." << endl; }
 
-            bool improving = true;
-            while(improving)
-            {
-                vector<vector<int> > current_TT = TT_eval_pair.first;
-                TT_eval_pair.first = assigner.improve(TT_eval_pair.first, input, UF);
-                if(current_TT == TT_eval_pair.first) improving = false;
-            }
-        }
-        if(update_best(&best_TT, &current_eval_score, TT_eval_pair)) {cout << "Found new best . . ." << endl; }
-
-        n_timetables_created += 2;
+        n_timetables_created += 1;
         starting_inputs.pop_front();
     }
 
@@ -119,6 +91,16 @@ pair<vector<vector<int>>, double> generate_time_score_pair(InputSort input, int 
 {
     //create_timetable needs a variable to determine its behaviour (what algorithm it tries)
     vector<vector<int>> TT = assigner.create_timetable(input, HOURS_PER_DAY, algorithm);
+
+    vector<int> UF = assigner.get_remaining_hours(TT, input.courses);
+    //run improver on timetable
+    bool improving = true;
+    while(improving)
+    {
+        vector<vector<int> > current_TT = TT;
+        TT = assigner.improve(TT, input, UF);
+        if(current_TT == TT) improving = false;
+    }
 
     //convert TT to string so it can be read by Eval()
     string time_table_csv = twinvec_to_string(TT);
