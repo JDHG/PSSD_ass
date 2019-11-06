@@ -106,24 +106,6 @@ int main(int argc, char const * argv[]) {
             }
         }
         if(update_best(&best_TT, &current_eval_score, TT_eval_pair)) {cout << "Found new best . . ." << endl; n_better_f++;}
-        //
-        // if(current_eval_score > 1)
-        // {
-        //     cout << "*** ATTEMPT IMPROVEMENT ***" << endl;
-        //     //get unfinished course indexes
-        //     vector<int> UF = assigner.get_remaining_hours(best_TT, input.courses);
-        //
-        //     bool improving = true;
-        //     while(improving)
-        //     {
-        //         vector<vector<int> > current_TT = best_TT;
-        //         best_TT = assigner.improve(best_TT, input, UF);
-        //         if(current_TT == best_TT) improving = false;
-        //     }
-        //
-        //     string time_table_csv = twinvec_to_string(best_TT);
-        //     current_eval_score = Eval(file_name, time_table_csv, new_file, debug);
-        // }
 
         // assigner_version_number++;
         n_timetables_created += 2;
@@ -134,32 +116,33 @@ int main(int argc, char const * argv[]) {
     cout << "---------------------------------------------------------------------------------------\n";
     cout << "number of timetables created = " << n_timetables_created << endl;
     cout << "fitness of final time_table  = " << current_eval_score << " -> Eval(" << Eval(file_name, twinvec_to_string(best_TT), true, debug) << ")" << endl;
-    assigner.print_twin_vec(best_TT); //output generation
+    // assigner.print_twin_vec(best_TT); //output generation
 
 
 
-    if(current_eval_score > 1)
-    {
-        cout << "*** ATTEMPT IMPROVEMENT ***" << endl;
-        //get unfinished course indexes
-        vector<int> UF = assigner.get_remaining_hours(best_TT, input.courses);
+    // if(current_eval_score > 1)
+    // {
+    //     cout << "*** ATTEMPT IMPROVEMENT ***" << endl;
+    //     //get unfinished course indexes
+    //     vector<int> UF = assigner.get_remaining_hours(best_TT, input.courses);
+    //
+    //     bool improving = true;
+    //     while(improving)
+    //     {
+    //         vector<vector<int> > current_TT = best_TT;
+    //         best_TT = assigner.improve(best_TT, input, UF);
+    //         if(current_TT == best_TT) improving = false;
+    //     }
+    //
+    //     string time_table_csv = twinvec_to_string(best_TT);
+    //     double eval_score = Eval(file_name, time_table_csv, new_file, debug);
+    // }
 
-        bool improving = true;
-        while(improving)
-        {
-            vector<vector<int> > current_TT = best_TT;
-            best_TT = assigner.improve(best_TT, input, UF);
-            if(current_TT == best_TT) improving = false;
-        }
-
-        string time_table_csv = twinvec_to_string(best_TT);
-        double eval_score = Eval(file_name, time_table_csv, new_file, debug);
-    }
-
+    assigner.print_twin_vec_debug(best_TT, input.courses, 8);
 
     assigner.print_twin_vec(best_TT); //output generation
     cout << Eval(file_name, twinvec_to_string(best_TT), true, debug) << endl;
-    cout << n_better_f << endl;
+    // cout << n_better_f << endl;
     return 0;
 }
 
