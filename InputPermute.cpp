@@ -79,7 +79,7 @@ InputPermute::InputPermute(string fnp, const char * file_name)
 
 InputPermute::InputPermute(const char * file_name, bool b)
 {
-    file_name_prefix = "NOT FORE FILE CREATION";
+    file_name_prefix = "NOT FOR FILE CREATION";
     set_input(file_name);
     debug = b;
 }
@@ -123,7 +123,6 @@ void InputPermute::set_input(const char * file_name)
     string TL_line = "";
     string LP_line = "";
 
-    cout << Rooms << endl;
     Rooms       = pop_input(); n_rooms = stoi(clean_line(&Rooms, "Rooms"));
     /*Courses */
     Courses     = pop_input(); n_courses = stoi(clean_line(&Courses, "Courses"));
@@ -177,28 +176,6 @@ vector<int> vector_starting_from(vector<int> input, int start)
     }
     return temp;
 }
-//Default permuter -> reads into files in cycle
-// vector<const char *> InputPermute::permute(unsigned int n_permutations)
-// {
-//     int file_number = 0; vector<int> access_order = {};
-//     vector<const char *> files = {};
-//     for(int i = 0; i < n_courses; i++)
-//     {
-//         access_order.push_back(i);
-//     }
-//
-//     //Shuffle through classes -> A, b, c, d :: b, c, d, A :: c, d, A, b :: d, A, b, c
-//     n_permutations /= n_courses; n_permutations++;
-//     for(int i = 0; i < access_order.size(); i++)
-//         for(int j = 0; j < n_permutations; j++)
-//         {
-//             files.push_back(write_to_file(file_number, vector_starting_from(access_order, i)));
-//             next_permutation(access_order.begin(), access_order.end());
-//             file_number++;
-//         }
-//
-//     return files;
-// }
 
 deque<InputSort> InputPermute::permute(unsigned int n_permutations, bool debug)
 {
