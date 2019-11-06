@@ -17,7 +17,27 @@ char get_spinner(int spin_counter);
 
 using namespace std;
 
+
+
+
+
 //Arguments to main are <debug> <file_name>
+
+//      Hello! Welcome to our timetabler!
+//      To run this script use the makefile (make)
+//      Then give required arguments -> ./scheduler <debug> <file_name> :
+//          -   <debug> is expected to be 'true' or 'false'
+//          -   <file_name> is the input file's name
+//          -   e.g. './scheduler false input.txt'  ::  is valid
+//          -        './scheduler input.txt'        ::  is invalid -> requires the debug to be specified
+//      You almost assuredly want to run the program with debug set to 'false'
+
+
+
+
+
+
+
 
 int main(int argc, char const * argv[]) {
 
@@ -26,8 +46,8 @@ int main(int argc, char const * argv[]) {
     int n_permutations = 10000;
     int spin_speed = 35;
 
-    if(argc < 3) { cout << "FATAL -> not enough arguments on main call (" << argc << "arguments)" << endl; exit(1); }
-    if(argc > 3) { cout <<   "FATAL -> too many arguments on main call (" << argc << "arguments)" << endl; exit(1); }
+    if(argc < 3) { cout << "FATAL -> not enough arguments on main call (" << argc << " arguments) || expecting ./scheduler <debug> <file_name>" << endl; exit(1); }
+    if(argc > 3) { cout <<   "FATAL -> too many arguments on main call (" << argc << " arguments) || expecting ./scheduler <debug> <file_name>" << endl; exit(1); }
 
     bool debug = false; bool print_permutations = false;
     string * do_debug = new string; *do_debug = argv[1];
