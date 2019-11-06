@@ -206,3 +206,18 @@ Commentary on general state of the code, thoughts and feelings on the assignment
  - Super satisfied with where we ended up finishing. We coded ourselves down many wrong paths but managed to either backtrack (re-code sections) or find a way to jump onto a better path (cannibalise/re-jig IO to allow communication between different classes and functions).
  - Further on coding ourselves down wrong paths (C.S. Lewis "We all want progress, but if you're on the wrong road, progress means doing an about-turn and walking back to the right road; in that case, the man who turns back soonest is the most progressive"). We had the option about halfway through to take a step back and re-assess the data structures we were using. We opted to continue as we were because of time restrictions. However, we possibly would have saved time overall by adapting the input sorting and input permuting classes into one class. As is often the case, attempting something for the first time leaves you at the mercy of learning through mistake-making. If I were to write a scheduler for my brother for example, I would use this code as a reference and attempt to avoid the tight coupling that occured.
  
+///////////////////////////////////////////////////////////
+
+**6/11/19 -> Jason & TommyG
+
+Uploaded what will be our final version of the program. The due date is close but so are exams, so we need to finish up with this and get more study done.
+
+Our final version has been adapted to compile with a makefile and produce an output.txt file that testers can read into the Eval program.
+
+On all of our test cases, we managed very good scores. Typically less than 1.6 or so which is pretty good. For simple cases, it often found timetables with scores of 1 nice and fast. We had larger test cases (ones with 16 or so courses) that run for around 30 seconds but also produce scores of around 1.2.
+
+Our assignment algorithm is doing most of the work in our program. We have created a fairly sophisticated system which has integrated the eval program into our own, and runs over hundreds, potentially thousands, of permutations of the original input file. Each timetable produced from each permutation is checked against the current best and stored if it is better. This means we get the best possible timetable our algorithm produces from a huge set of possible timetables. Each timetable is also run through our basic iterative improver which seeks to allocate any hours that were not allocated in the original assignment as this produces the greatest changes to our final score.
+
+As mentioned in earlier logbook entries, the input permutation idea was meant to produce a solid starting point for improvement. But, we realised that our simple improvements could be run on all the permutations without a major performance cost, and so we were likely to find a perfect solution or at very least, a solution with score < 2. The improver was considered simple and efficient because it didn't have to run the evaluation function after every iteration.
+
+So in sum, we are running our entire process on thousands of permutations of the original input to produce a solid timetable.
