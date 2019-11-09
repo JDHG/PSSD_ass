@@ -12,8 +12,8 @@ class Assigner
 
     /* ASSIGNER CREATE TIMETABLE FUNCTIONALITY */
 
-    std::vector<int> hours_assigned; //stores assigned hours of each copy of input.courses hours
-
+    //stores assigned hours of each copy of input.courses hours
+    std::vector<int> hours_assigned;
 
     //create return vector-vector of -1's
     std::vector<vector<int> > initialise_empty_timetable(int n_courses, int n_days, int n_hours);
@@ -44,7 +44,7 @@ class Assigner
     //return true if all course hours have been assigned
     bool is_complete(std::vector<vector<int> > time_table, std::vector<Course> courses, bool input_debug);
 
-
+    //error messaging if needed
     void fatal(std::string error_message);
 
 public:
@@ -52,15 +52,13 @@ public:
 
     //TIMETABLE CREATION ALGORITHM
     std::vector<vector<int> > create_timetable(InputSort input, int hours_per_day, int version);
-    // std::vector<vector<int> > create_timetable(InputSort input, int hours_per_day, int version);
 
-    /* ITERATIVE IMPROVEMENT FUNCTIONALITY */
-
+    //get course hours that have not been assigned
     std::vector<int> get_remaining_hours(std::vector<std::vector<int> > time_table, std::vector<Course> courses);
 
-    //returns a time table that has undergone one step of iterative improvement
+    //returns a time table that has undergone one step of iterative improvement if possible
     std::vector<std::vector<int> > improve(std::vector<std::vector<int> > time_table, InputSort input, vector<int> incomplete_courses);
-    
+
     //print time_table in readable debug format
     void print_time_table_debug(std::vector<int> v, char neg_replace, int hours_per_day); //print neg_replace instead of negative integers
     void print_twin_vec_debug(std::vector<vector<int> > v, std::vector<Course> courses, int hours_per_day);
